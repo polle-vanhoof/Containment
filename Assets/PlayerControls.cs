@@ -92,21 +92,21 @@ public class PlayerControls : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.RightArrow))
             moveRight();
 
-        /*if (Input.touchCount == 1) {
+        if (Input.touchCount == 1) {
             Touch touch = Input.touches[0];
             if (Math.Abs(touch.deltaPosition.x) > Math.Abs(touch.deltaPosition.y)) {
                 if (touch.deltaPosition.x > sensitivity) {
-                    rb.velocity = new Vector3(speed, 0);
+                    moveRight();
                 } else if (touch.deltaPosition.x < -sensitivity) {
-                    rb.velocity = new Vector3(-speed, 0);
+                    moveLeft();
                 }
             } else {
                 if (touch.deltaPosition.y > sensitivity) {
-                    rb.velocity = new Vector3(0, speed);
+                    moveUp();
                 } else if (touch.deltaPosition.y < -sensitivity) {
-                    rb.velocity = new Vector3(0, -speed);
+                    moveDown();
                 }
             }
-        }*/
+        }
     }
 }
