@@ -6,6 +6,7 @@ public class GameSetup : MonoBehaviour {
     public static bool debugMode = false;
 
     public Camera mainCam;
+    public Rigidbody2D player;
 
     public BoxCollider2D topWall;
     public BoxCollider2D bottomWall;
@@ -30,6 +31,11 @@ public class GameSetup : MonoBehaviour {
 
         leftWall.size = new Vector2(1f, mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height * 2f, 0f)).y);
         leftWall.offset = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).x - 0.5f, 0f);
+
+        // little bit to the right of top left corner
+        float playerStartY = mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height, 0f)).y;
+        float playerStartX = mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).x + 0.5f;
+        player.position = new Vector2(playerStartX, playerStartY);
 
     }
 
