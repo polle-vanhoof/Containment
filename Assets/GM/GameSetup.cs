@@ -13,7 +13,7 @@ public class GameSetup : MonoBehaviour {
     public BoxCollider2D rightWall;
     public BoxCollider2D leftWall;
 
-    public Transform gridSprite;
+    public GameObject gridSprite;
     private ArrayList sprites = new ArrayList();
     private Vector2 numSprites;
 
@@ -37,14 +37,33 @@ public class GameSetup : MonoBehaviour {
         Vector2 bottomLeft = mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f));
         Vector2 topRight = mainCam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0f));
         float spriteSize = 0.1f;
+        int matrixX = 0;
         for (float x = bottomLeft.x; x < topRight.x; x = x + spriteSize) {
+            int matrixY = 0;
             ArrayList spritesLine = new ArrayList();
             for (float y = bottomLeft.y; y < topRight.y; y = y + spriteSize) {
-                Transform newSprite = (Transform) Instantiate(gridSprite, new Vector3(x, y, 0), Quaternion.identity);
-                spritesLine.Add(newSprite);
-                newSprite.GetComponent<Renderer>().enabled = false;
+                GameObject newSpriteObject = (GameObject) Instantiate(gridSprite, new Vector3(x, y, 0), Quaternion.identity);
+                spritesLine.Add(newSpriteObject);
+                newSpriteObject.GetComponent<Transform>().GetComponent<Renderer>().enabled = false;
+                GridElement ownScript = newSpriteObject.GetComponent<GridElement>();
+                if(matrixY > 0) {
+                    GridElement leftNeighbour = ((GameObject)spritesLine[matrixY - 1]).GetComponent<GridElement>();
+                    leftNeighbour.addNeighbour(ownScript);
+                    ownScript.addNeighbour(leftNeighbour);
+                }
+                matrixY++;
             }
             sprites.Add(spritesLine);
+            if(matrixX > 0) {
+                ArrayList previousLine = (ArrayList) sprites[matrixX - 1];
+                for(int i=0; i < previousLine.Count; i++) {
+                    GridElement element1 = ((GameObject)spritesLine[i]).GetComponent<GridElement>();
+                    GridElement element2 = ((GameObject)previousLine[i]).GetComponent<GridElement>();
+                    element1.addNeighbour(element2);
+                    element2.addNeighbour(element1);
+                }
+            }
+            matrixX++;
         }
         numSprites = new Vector2(sprites.Count, ((ArrayList)sprites[0]).Count);
         Debug.Log("number of grid elements: " + numSprites.x + " x " + numSprites.y);

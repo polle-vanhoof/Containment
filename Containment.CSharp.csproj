@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="Assets\Enemy\EnemyAI.cs" />
     <Compile Include="Assets\GM\GameSetup.cs" />
+    <Compile Include="Assets\GM\GridElement.cs" />
     <Compile Include="Assets\GM\TouchTest.cs" />
     <Compile Include="Assets\Player\AreaCapture.cs" />
     <Compile Include="Assets\Player\PlayerControls.cs" />
