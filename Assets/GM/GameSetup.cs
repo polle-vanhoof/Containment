@@ -14,13 +14,51 @@ public class GameSetup : MonoBehaviour {
     public BoxCollider2D rightWall;
     public BoxCollider2D leftWall;
 
+    public Transform gridSprite;
+    private ArrayList sprites = new ArrayList();
+    private Vector2 numSprites;
+
     // Update is called once per frame
     void Start() {
         // !!! fucks up all offsets - DO NOT USE !!!   => set in project settings instead
         //Screen.orientation = ScreenOrientation.LandscapeLeft;
 
         // Move each wall to its edge location
+        setUpWalls();
 
+        // Move player to its start location
+        setUpPlayer();
+
+        // Create game grid
+        generateGrid();
+
+    }
+
+    private void generateGrid() {
+        Vector2 bottomLeft = mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f));
+        Vector2 topRight = mainCam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0f));
+        float spriteSize = 0.1f;
+        for (float x = bottomLeft.x; x < topRight.x; x = x + spriteSize) {
+            ArrayList spritesLine = new ArrayList();
+            for (float y = bottomLeft.y; y < topRight.y; y = y + spriteSize) {
+                Transform newSprite = (Transform) Instantiate(gridSprite, new Vector3(x, y, 0), Quaternion.identity);
+                spritesLine.Add(newSprite);
+                newSprite.GetComponent<Renderer>().enabled = false;
+            }
+            sprites.Add(spritesLine);
+        }
+        numSprites = new Vector2(sprites.Count, ((ArrayList)sprites[0]).Count);
+        Debug.Log("number of grid elements: " + numSprites.x + " x " + numSprites.y);
+    }
+
+    private void setUpPlayer() {
+        // little bit to the right of top left corner
+        float playerStartY = mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height, 0f)).y;
+        float playerStartX = mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).x + 0.5f;
+        player.position = new Vector2(playerStartX, playerStartY);
+    }
+
+    private void setUpWalls() {
         topWall.size = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(Screen.width * 2f, 0f, 0f)).x, 1f);
         topWall.offset = new Vector2(0f, mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height, 0f)).y + 0.5f);
 
@@ -32,13 +70,17 @@ public class GameSetup : MonoBehaviour {
 
         leftWall.size = new Vector2(1f, mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height * 2f, 0f)).y);
         leftWall.offset = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).x - 0.5f, 0f);
-
-        // little bit to the right of top left corner
-        float playerStartY = mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height, 0f)).y;
-        float playerStartX = mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).x + 0.5f;
-        player.position = new Vector2(playerStartX, playerStartY);
-
     }
+
+
+    public static void gameOver() {
+        // game over
+    }
+
+    public static void captureArea(LinkedList<Vector2> cornerpoints) {
+        // capture area based on player path corners
+    }
+
 
     void OnGUI() {
         if (debugMode) {
@@ -74,14 +116,5 @@ public class GameSetup : MonoBehaviour {
 
             GUI.Label(new Rect(390, 0, 120, 100), messageLeft);
         }
-    }
-
-
-    public static void gameOver() {
-        // game over
-    }
-
-    public static void captureArea(LinkedList<Vector2> cornerpoints) {
-        // capture area based on player path corners
     }
 }
