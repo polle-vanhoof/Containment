@@ -6,19 +6,18 @@ using System.Collections.Generic;
 public class PlayerControls : MonoBehaviour {
 
     public TrailRendererLevel trailRenderer;
+    public AreaCapture areaCapture;
 
     public float speed = 5;
     public float sensitivity = 3;
 
-    private bool onSide = true;
-    private String direction = "right";
+    public bool onSide = true;
+    public String direction = "right";
     private String wallSide = "";
     public bool lastXMovementLeft;
     public bool lastYMovementDown;
 
     public Rigidbody2D rb;
-
-    private LinkedList<Vector2> pathCorners = new LinkedList<Vector2>();
     
     void Start() {
         rb = GetComponent<Rigidbody2D>();
@@ -35,8 +34,7 @@ public class PlayerControls : MonoBehaviour {
 
         // create new captured area
         if (!onSide) {
-        pathCorners.AddLast(rb.position);
-        GameSetup.captureArea(pathCorners);
+            areaCapture.createCollisionIfRequired();
         }
 
         // make player follow the walls
@@ -67,18 +65,8 @@ public class PlayerControls : MonoBehaviour {
             lastYMovementDown = true;
         if (colInfo.gameObject.name == "bottomWall")
             lastYMovementDown = false;
-        /*if (lastYMovementDown && (colInfo.gameObject.name == "rightWall" ||
-                colInfo.gameObject.name == "leftWall") )
-            moveDown();
-        else if (!lastYMovementDown && (colInfo.gameObject.name == "leftWall" && !lastYMovementDown)
-            moveUp();
-        else if (colInfo.gameObject.name == "topWall")
-            moveRight();
-        else if (colInfo.gameObject.name == "bottomWall")
-            moveLeft();*/
 
-        // clear path corners
-        this.pathCorners.Clear();
+        areaCapture.setLastMovePointNull();
     }
 
     private void moveDown()
@@ -90,7 +78,7 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
-        addCornerToPath();
+        areaCapture.createCollisionIfRequired();
     }
 
     private void moveUp()
@@ -102,7 +90,7 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
-        addCornerToPath();
+        areaCapture.createCollisionIfRequired();
     }
 
     private void moveLeft()
@@ -114,7 +102,7 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
-        addCornerToPath();
+        areaCapture.createCollisionIfRequired();
     }
 
     private void moveRight()
@@ -126,7 +114,7 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
-        addCornerToPath();
+        areaCapture.createCollisionIfRequired();
     }
 
     void FixedUpdate() {
@@ -157,14 +145,8 @@ public class PlayerControls : MonoBehaviour {
         }
     }
 
-    void addCornerToPath() {
-        if (!onSide) {
-            pathCorners.AddLast(rb.position);
-        }
-    }
 
-
-    void setWallSide() {
+    private void setWallSide() {
         if (direction.Equals("up"))
             wallSide = "bottom";
         if (direction.Equals("down"))
@@ -174,4 +156,6 @@ public class PlayerControls : MonoBehaviour {
         if (direction.Equals("right"))
             wallSide = "left";
     }
+
+
 }
