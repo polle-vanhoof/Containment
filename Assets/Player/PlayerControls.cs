@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class PlayerControls : MonoBehaviour {
 
+    public TrailRendererLevel trailRenderer;
+
     public float speed = 5;
     public float sensitivity = 3;
 
@@ -25,6 +27,9 @@ public class PlayerControls : MonoBehaviour {
     }
 
     void OnCollisionEnter2D(Collision2D colInfo) {
+        // stop generating trail
+        trailRenderer.stopTrail();
+
         // set wall side
         setWallSide();
 
@@ -83,6 +88,7 @@ public class PlayerControls : MonoBehaviour {
         direction = "down";
         if(onSide && wallSide == "bottom") {
             onSide = false;
+            trailRenderer.startTrail();
         }
         addCornerToPath();
     }
@@ -94,6 +100,7 @@ public class PlayerControls : MonoBehaviour {
         direction = "up";
         if (onSide && wallSide == "top") {
             onSide = false;
+            trailRenderer.startTrail();
         }
         addCornerToPath();
     }
@@ -105,6 +112,7 @@ public class PlayerControls : MonoBehaviour {
         direction = "left";
         if (onSide && wallSide == "left") {
             onSide = false;
+            trailRenderer.startTrail();
         }
         addCornerToPath();
     }
@@ -116,6 +124,7 @@ public class PlayerControls : MonoBehaviour {
         direction = "right";
         if (onSide && wallSide == "right") {
             onSide = false;
+            trailRenderer.startTrail();
         }
         addCornerToPath();
     }
