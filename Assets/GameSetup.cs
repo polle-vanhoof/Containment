@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameSetup : MonoBehaviour {
 
@@ -78,5 +79,9 @@ public class GameSetup : MonoBehaviour {
 
     public static void gameOver() {
         // game over
+    }
+
+    public static void captureArea(LinkedList<Vector2> cornerpoints) {
+        // capture area based on player path corners
     }
 }

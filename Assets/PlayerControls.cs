@@ -1,17 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class PlayerControls : MonoBehaviour {
 
     public float speed = 5;
     public float sensitivity = 3;
 
-    public bool onSide = true;
+    private bool onSide = true;
+    private String direction = "right";
+    private String wallSide = "";
     public bool lastXMovementLeft;
     public bool lastYMovementDown;
 
     public Rigidbody2D rb;
+
+    private LinkedList<Vector2> pathCorners = new LinkedList<Vector2>();
     
     void Start() {
         rb = GetComponent<Rigidbody2D>();
@@ -20,6 +25,16 @@ public class PlayerControls : MonoBehaviour {
     }
 
     void OnCollisionEnter2D(Collision2D colInfo) {
+        // set wall side
+        setWallSide();
+
+        // create new captured area
+        if (!onSide) {
+        pathCorners.AddLast(rb.position);
+        GameSetup.captureArea(pathCorners);
+        }
+
+        // make player follow the walls
         if (colInfo.gameObject.name == "rightWall" ||
                 colInfo.gameObject.name == "leftWall" ||
                 colInfo.gameObject.name == "topWall" ||
@@ -56,30 +71,53 @@ public class PlayerControls : MonoBehaviour {
             moveRight();
         else if (colInfo.gameObject.name == "bottomWall")
             moveLeft();*/
+
+        // clear path corners
+        this.pathCorners.Clear();
     }
 
     private void moveDown()
     {
         rb.velocity = new Vector2(0, -speed);
         lastYMovementDown = true;
+        direction = "down";
+        if(onSide && wallSide == "bottom") {
+            onSide = false;
+        }
+        addCornerToPath();
     }
 
     private void moveUp()
     {
         rb.velocity = new Vector2(0, speed);
         lastYMovementDown = false;
+        direction = "up";
+        if (onSide && wallSide == "top") {
+            onSide = false;
+        }
+        addCornerToPath();
     }
 
     private void moveLeft()
     {
         rb.velocity = new Vector2(-speed, 0);
         lastXMovementLeft = true;
+        direction = "left";
+        if (onSide && wallSide == "left") {
+            onSide = false;
+        }
+        addCornerToPath();
     }
 
     private void moveRight()
     {
         rb.velocity = new Vector2(speed, 0);
         lastXMovementLeft = false;
+        direction = "right";
+        if (onSide && wallSide == "right") {
+            onSide = false;
+        }
+        addCornerToPath();
     }
 
     void FixedUpdate() {
@@ -108,5 +146,23 @@ public class PlayerControls : MonoBehaviour {
                 }
             }
         }
+    }
+
+    void addCornerToPath() {
+        if (!onSide) {
+            pathCorners.AddLast(rb.position);
+        }
+    }
+
+
+    void setWallSide() {
+        if (direction.Equals("up"))
+            wallSide = "bottom";
+        if (direction.Equals("down"))
+            wallSide = "top";
+        if (direction.Equals("left"))
+            wallSide = "right";
+        if (direction.Equals("right"))
+            wallSide = "left";
     }
 }
