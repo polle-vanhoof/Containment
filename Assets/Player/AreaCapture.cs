@@ -87,11 +87,27 @@ public class AreaCapture : MonoBehaviour {
     }
 
     public void floodFill(GridElement startElement) {
+        GridElement wallElement = null;
         Queue<GridElement> queue = new Queue<GridElement>();
         queue.Enqueue(startElement);
         while (queue.Count != 0) {
             GridElement element = queue.Dequeue();
             if (element.capture(walls)) {
+                foreach (GridElement neighbour in element.getNeighbours()) {
+                    queue.Enqueue(neighbour);
+                }
+            }else if(wallElement == null) {
+                if (element.ContainsWall(walls)) {
+                    wallElement = element;
+                }
+            }
+        }
+
+        // floodfill the wall as well
+        queue.Enqueue(wallElement);
+        while (queue.Count != 0) {
+            GridElement element = queue.Dequeue();
+            if (element.captureWall(walls)) {
                 foreach (GridElement neighbour in element.getNeighbours()) {
                     queue.Enqueue(neighbour);
                 }

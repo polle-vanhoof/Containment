@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class GridElement : MonoBehaviour {
 
+    public AreaCapture areaCaptureScript;
     private bool captured = false;
     private bool searchedForEnemy = false;
     public ArrayList neighbours = new ArrayList();
@@ -14,6 +15,16 @@ public class GridElement : MonoBehaviour {
 
     public bool capture(LinkedList<BoxCollider2D> walls) {
         if (captured || ContainsWall(walls)) {
+            return false;
+        } else {
+            GetComponent<Renderer>().enabled = true;
+            captured = true;
+            return true;
+        }
+    }
+
+    public bool captureWall(LinkedList<BoxCollider2D> walls) {
+        if (captured || !ContainsWall(walls)) {
             return false;
         } else {
             GetComponent<Renderer>().enabled = true;
