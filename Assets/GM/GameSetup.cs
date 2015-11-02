@@ -95,6 +95,30 @@ public class GameSetup : MonoBehaviour {
         // game over
     }
 
+    public GridElement findClosestGridElement(Vector2 point) {
+        GridElement closest = ((GameObject)((ArrayList)sprites[0])[0]).GetComponent<GridElement>();
+        for(int i=0; i<sprites.Count; i++) {
+            ArrayList spriteLine = (ArrayList) sprites[i];
+            for(int j=0; j< spriteLine.Count; j++) {
+                GridElement element = ((GameObject) spriteLine[j]).GetComponent<GridElement>();
+                if (Vector2.Distance(element.transform.position, point) < Vector2.Distance(closest.transform.position, point)) {
+                    closest = element;
+                }
+            }
+        }
+        return closest;
+    }
+
+    public void resetGridForEnemySearch() {
+        for (int i = 0; i < sprites.Count; i++) {
+            ArrayList spriteLine = (ArrayList)sprites[i];
+            for (int j = 0; j < spriteLine.Count; j++) {
+                GridElement element = ((GameObject)spriteLine[j]).GetComponent<GridElement>();
+                element.resetEnemySearch();
+            }
+        }
+    }
+
 
     void OnGUI() {
         if (debugMode) {

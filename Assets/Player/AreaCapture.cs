@@ -5,6 +5,7 @@ using System;
 
 public class AreaCapture : MonoBehaviour {
 
+    public EnemyAI enemy;
     public PlayerControls controls;
     private bool validLastMovePoint = false;
     private Vector2 lastMovePoint = Vector2.zero;
@@ -47,6 +48,7 @@ public class AreaCapture : MonoBehaviour {
     IEnumerator BuildDelayedCollisionBox(Vector2 point1, Vector2 point2, bool hitWall, float delayTime) {
         yield return new WaitForSeconds(delayTime);
         Debug.Log("Collision Box between (" + point1.x + "," + point1.y + ") and (" + point2.x + "," + point2.y + ")");
+        Vector2 floodFillStartPoint;
         if (point1.x == point2.x) {
             Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
             newWall.GetComponent<BoxCollider2D>().size = new Vector2(0.1f, Math.Abs(point1.y - point2.y));
@@ -58,27 +60,36 @@ public class AreaCapture : MonoBehaviour {
             }
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(point1.x, yOffset);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
+            floodFillStartPoint = new Vector2(point1.x + 0.2f, point2.y);
+            if (TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
+                floodFillStartPoint = new Vector2(point1.x - 0.2f, point2.y);
+            }
         } else {
             Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
             newWall.GetComponent<BoxCollider2D>().size = new Vector2(Math.Abs(point1.x - point2.x), 0.1f);
             float xOffset;
-            if(point1.x < point2.x) {
+            if (point1.x < point2.x) {
                 xOffset = point1.x + Math.Abs(point1.x - point2.x) / 2.0f; ;
             } else {
                 xOffset = point2.x + Math.Abs(point1.x - point2.x) / 2.0f; ;
             }
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(xOffset, point1.y);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
+            floodFillStartPoint = new Vector2(point2.x, point1.y +0.2f);
+            if (TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
+                floodFillStartPoint = new Vector2(point2.x, point1.y - 0.2f);
+            }
         }
         if (hitWall) {
-        floodFill(((GameObject)((ArrayList)setup.sprites[0])[0]).GetComponent<GridElement>());
+            GridElement closestPoint = setup.findClosestGridElement(floodFillStartPoint);
+            floodFill(closestPoint);
         }
     }
 
     public void floodFill(GridElement startElement) {
         Queue<GridElement> queue = new Queue<GridElement>();
         queue.Enqueue(startElement);
-        while(queue.Count != 0) {
+        while (queue.Count != 0) {
             GridElement element = queue.Dequeue();
             if (element.capture(walls)) {
                 foreach (GridElement neighbour in element.getNeighbours()) {
@@ -86,6 +97,26 @@ public class AreaCapture : MonoBehaviour {
                 }
             }
         }
+    }
+
+    public bool TestForEnemy(GridElement startElement) {
+        setup.resetGridForEnemySearch();
+        bool containsEnemy = false;
+        Queue<GridElement> queue = new Queue<GridElement>();
+        queue.Enqueue(startElement);
+        while (queue.Count != 0) {
+            GridElement element = queue.Dequeue();
+            if (element.findEnemy(walls)) {
+                if (element.ContainsEnemy(enemy)) {
+                    containsEnemy = true;
+                    break;
+                }
+                foreach (GridElement neighbour in element.getNeighbours()) {
+                    queue.Enqueue(neighbour);
+                }
+            }
+        }
+        return containsEnemy;
     }
 
 }
