@@ -34,7 +34,7 @@ public class PlayerControls : MonoBehaviour {
 
         // create new captured area
         if (!onSide) {
-            areaCapture.createCollisionIfRequired();
+            areaCapture.createCollisionIfRequired(true);
         }
 
         // make player follow the walls
@@ -78,7 +78,7 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
-        areaCapture.createCollisionIfRequired();
+        areaCapture.createCollisionIfRequired(false);
     }
 
     private void moveUp()
@@ -90,7 +90,7 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
-        areaCapture.createCollisionIfRequired();
+        areaCapture.createCollisionIfRequired(false);
     }
 
     private void moveLeft()
@@ -102,7 +102,7 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
-        areaCapture.createCollisionIfRequired();
+        areaCapture.createCollisionIfRequired(false);
     }
 
     private void moveRight()
@@ -114,7 +114,7 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
-        areaCapture.createCollisionIfRequired();
+        areaCapture.createCollisionIfRequired(false);
     }
 
     void FixedUpdate() {

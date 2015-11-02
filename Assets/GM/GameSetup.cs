@@ -14,7 +14,7 @@ public class GameSetup : MonoBehaviour {
     public BoxCollider2D leftWall;
 
     public GameObject gridSprite;
-    private ArrayList sprites = new ArrayList();
+    public ArrayList sprites = new ArrayList();
     private Vector2 numSprites;
 
     // Update is called once per frame
@@ -41,7 +41,7 @@ public class GameSetup : MonoBehaviour {
         for (float x = bottomLeft.x; x < topRight.x; x = x + spriteSize) {
             int matrixY = 0;
             ArrayList spritesLine = new ArrayList();
-            for (float y = bottomLeft.y; y < topRight.y; y = y + spriteSize) {
+            for (float y = bottomLeft.y + 0.05f; y < topRight.y; y = y + spriteSize) {
                 GameObject newSpriteObject = (GameObject) Instantiate(gridSprite, new Vector3(x, y, 0), Quaternion.identity);
                 spritesLine.Add(newSpriteObject);
                 newSpriteObject.GetComponent<Transform>().GetComponent<Renderer>().enabled = false;
