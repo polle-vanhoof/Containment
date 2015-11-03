@@ -38,6 +38,7 @@ public class AreaCapture : MonoBehaviour {
     public void createCollisionIfRequired(bool hitWall) {
         if (!controls.onSide) {
             if (validLastMovePoint) {
+                Debug.Log("creating collision box");
                 createCollisionBox(lastMovePoint, controls.rb.position, hitWall);
             }
             lastMovePoint = controls.rb.position;
@@ -61,7 +62,7 @@ public class AreaCapture : MonoBehaviour {
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(point1.x, yOffset);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
             floodFillStartPoint = new Vector2(point1.x + 0.2f, point2.y);
-            if (TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
+            if (hitWall && TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
                 floodFillStartPoint = new Vector2(point1.x - 0.2f, point2.y);
             }
         } else {
@@ -76,7 +77,7 @@ public class AreaCapture : MonoBehaviour {
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(xOffset, point1.y);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
             floodFillStartPoint = new Vector2(point2.x, point1.y +0.2f);
-            if (TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
+            if (hitWall && TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
                 floodFillStartPoint = new Vector2(point2.x, point1.y - 0.2f);
             }
         }
