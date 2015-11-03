@@ -12,13 +12,14 @@ public class PlayerControls : MonoBehaviour {
     public float sensitivity = 3;
 
     public bool onSide = true;
-    public String direction = "right";
-    private String wallSide = "";
-    public bool lastXMovementLeft;
-    public bool lastYMovementDown;
+    public String direction;
+    private String wallSide = "bottom";
+    private bool firstCollision = true;
+    /*public bool lastXMovementLeft;
+    public bool lastYMovementDown;*/
 
     public Rigidbody2D rb;
-    
+
     void Start() {
         rb = GetComponent<Rigidbody2D>();
         //Do not use moveRight here because this will mess up collisionDetection
@@ -26,25 +27,74 @@ public class PlayerControls : MonoBehaviour {
     }
 
     void OnCollisionEnter2D(Collision2D colInfo) {
+        if (firstCollision) {
+            Debug.Log("first collision");
+            firstCollision = false;
+            return;
+        }
+        Debug.Log("collision!");
         // stop generating trail
         trailRenderer.stopTrail();
-
+        String lastWallSide = wallSide;
         // set wall side
         setWallSide();
+        Debug.Log(wallSide);
 
         // create new captured area
         if (!onSide) {
+            Debug.Log("building wall");
             areaCapture.createCollisionIfRequired(true);
+        } else {
+            if (lastWallSide == "bottom") {
+                /*if (direction.Equals("right")) {
+                    wallSide = "left";
+                } else {
+                    wallSide = "right";
+                }*/
+                moveDown();
+            }
+            if (lastWallSide == "top") {
+                /*if (direction.Equals("right")) {
+                    wallSide = "left";
+                } else {
+                    wallSide = "right";
+                }*/
+                moveUp();
+            }
+            if (lastWallSide == "left") {
+                /*if (direction.Equals("up")) {
+                    wallSide = "bottom";
+                } else {
+                    wallSide = "top";
+                }*/
+                moveLeft();
+            }
+            if (lastWallSide == "right") {
+                /*if (direction.Equals("up")) {
+                    wallSide = "bottom";
+                } else {
+                    wallSide = "top";
+                }*/
+                moveRight();
+            }
         }
 
-        // make player follow the walls
         if (colInfo.gameObject.name == "rightWall" ||
                 colInfo.gameObject.name == "leftWall" ||
                 colInfo.gameObject.name == "topWall" ||
-                colInfo.gameObject.name == "bottomWall")
+                colInfo.gameObject.name == "bottomWall") {
             onSide = true;
+        } else {
+            foreach (BoxCollider2D collider in areaCapture.walls) {
+                if (collider == colInfo.collider) {
+                    onSide = true;
+                }
+            }
+        }
 
-        if (colInfo.gameObject.name == "rightWall" ||
+
+
+        /*if (colInfo.gameObject.name == "rightWall" ||
                 colInfo.gameObject.name == "leftWall")
             if (lastYMovementDown)
                 moveDown();
@@ -64,27 +114,25 @@ public class PlayerControls : MonoBehaviour {
         if (colInfo.gameObject.name == "topWall")
             lastYMovementDown = true;
         if (colInfo.gameObject.name == "bottomWall")
-            lastYMovementDown = false;
+            lastYMovementDown = false;*/
 
         areaCapture.setLastMovePointNull();
     }
 
-    private void moveDown()
-    {
+    public void moveDown() {
         rb.velocity = new Vector2(0, -speed);
-        lastYMovementDown = true;
+        //lastYMovementDown = true;
         direction = "down";
-        if(onSide && wallSide == "bottom") {
+        if (onSide && wallSide == "bottom") {
             onSide = false;
             trailRenderer.startTrail();
         }
         areaCapture.createCollisionIfRequired(false);
     }
 
-    private void moveUp()
-    {
+    public void moveUp() {
         rb.velocity = new Vector2(0, speed);
-        lastYMovementDown = false;
+        //lastYMovementDown = false;
         direction = "up";
         if (onSide && wallSide == "top") {
             onSide = false;
@@ -93,10 +141,9 @@ public class PlayerControls : MonoBehaviour {
         areaCapture.createCollisionIfRequired(false);
     }
 
-    private void moveLeft()
-    {
+    public void moveLeft() {
         rb.velocity = new Vector2(-speed, 0);
-        lastXMovementLeft = true;
+        //lastXMovementLeft = true;
         direction = "left";
         if (onSide && wallSide == "left") {
             onSide = false;
@@ -105,10 +152,9 @@ public class PlayerControls : MonoBehaviour {
         areaCapture.createCollisionIfRequired(false);
     }
 
-    private void moveRight()
-    {
+    public void moveRight() {
         rb.velocity = new Vector2(speed, 0);
-        lastXMovementLeft = false;
+        //lastXMovementLeft = false;
         direction = "right";
         if (onSide && wallSide == "right") {
             onSide = false;
@@ -155,6 +201,10 @@ public class PlayerControls : MonoBehaviour {
             wallSide = "right";
         if (direction.Equals("right"))
             wallSide = "left";
+    }
+
+    public void setPlayerLocation(Vector2 position) {
+        rb.position = position;
     }
 
 

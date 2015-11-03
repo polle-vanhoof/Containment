@@ -62,9 +62,23 @@ public class AreaCapture : MonoBehaviour {
             }
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(point1.x, yOffset);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
-            floodFillStartPoint = new Vector2(point1.x + setup.spriteSize*2f, point2.y);
-            if (hitWall && TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
-                floodFillStartPoint = new Vector2(point1.x - setup.spriteSize*2f, point2.y);
+            float backOffset = setup.spriteSize + 0.05f;
+            if(controls.direction.Equals("up")) {
+                backOffset = -backOffset;
+            }
+            floodFillStartPoint = new Vector2(point1.x + setup.spriteSize*2f, point2.y + backOffset);
+            if (hitWall) {
+                Vector2 newPlayerloc;
+                if (TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
+                    newPlayerloc = new Vector2(point2.x +0.35f, point2.y);
+                    controls.setPlayerLocation(newPlayerloc);
+                    controls.moveRight();
+                    floodFillStartPoint = new Vector2(point1.x - setup.spriteSize * 2f, point2.y + backOffset);
+                } else {
+                    newPlayerloc = new Vector2(point2.x - 0.35f, point2.y);
+                    controls.setPlayerLocation(newPlayerloc);
+                    controls.moveLeft();
+                }
             }
         } else {
             Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
@@ -77,9 +91,23 @@ public class AreaCapture : MonoBehaviour {
             }
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(xOffset, point1.y);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
-            floodFillStartPoint = new Vector2(point2.x, point1.y + setup.spriteSize*2f);
-            if (hitWall && TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
-                floodFillStartPoint = new Vector2(point2.x, point1.y - setup.spriteSize*2);
+            float backOffset = setup.spriteSize + 0.05f;
+            if (controls.direction.Equals("right")) {
+                backOffset = -backOffset;
+            }
+            floodFillStartPoint = new Vector2(point2.x + backOffset, point1.y + setup.spriteSize*2f);
+            if (hitWall) {
+                Vector2 newPlayerLoc;
+                if (TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
+                    newPlayerLoc = new Vector2(point2.x, point2.y +0.35f);
+                    controls.setPlayerLocation(newPlayerLoc);
+                    controls.moveUp();
+                    floodFillStartPoint = new Vector2(point2.x + backOffset, point1.y - setup.spriteSize * 2);
+                } else {
+                    newPlayerLoc = new Vector2(point2.x, point2.y -0.35f);
+                    controls.setPlayerLocation(newPlayerLoc);
+                    controls.moveDown();
+                }
             }
         }
         if (hitWall) {
@@ -118,7 +146,7 @@ public class AreaCapture : MonoBehaviour {
                 }
             }
         }
-        Debug.Log(count);
+        Debug.Log("filling " + count + " grid elements");
     }
 
     private bool TestForEnemy(GridElement startElement) {

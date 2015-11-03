@@ -74,7 +74,7 @@ public class GameSetup : MonoBehaviour {
     private void setUpPlayer() {
         // little bit to the right of top left corner
         float playerStartY = mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height, 0f)).y;
-        float playerStartX = mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).x + 0.5f;
+        float playerStartX = mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).x + 10f;
         player.position = new Vector2(playerStartX, playerStartY);
     }
 
