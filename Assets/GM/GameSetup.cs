@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+
 public class GameSetup : MonoBehaviour {
 
     public static bool debugMode = false;
@@ -16,6 +18,7 @@ public class GameSetup : MonoBehaviour {
     public GameObject gridSprite;
     public ArrayList sprites = new ArrayList();
     private Vector2 numSprites;
+    public float spriteSize;
 
     // Update is called once per frame
     void Start() {
@@ -36,17 +39,16 @@ public class GameSetup : MonoBehaviour {
     private void generateGrid() {
         Vector2 bottomLeft = mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f));
         Vector2 topRight = mainCam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0f));
-        float spriteSize = 0.1f;
         int matrixX = 0;
-        for (float x = bottomLeft.x; x < topRight.x; x = x + spriteSize) {
+        for (float x = bottomLeft.x + spriteSize / 2f; x < topRight.x; x = x + spriteSize) {
             int matrixY = 0;
             ArrayList spritesLine = new ArrayList();
-            for (float y = bottomLeft.y + 0.05f; y < topRight.y; y = y + spriteSize) {
-                GameObject newSpriteObject = (GameObject) Instantiate(gridSprite, new Vector3(x, y, 0), Quaternion.identity);
+            for (float y = bottomLeft.y + spriteSize / 2f; y < topRight.y; y = y + spriteSize) {
+                GameObject newSpriteObject = (GameObject)Instantiate(gridSprite, new Vector3(x, y, 0), Quaternion.identity);
                 spritesLine.Add(newSpriteObject);
                 newSpriteObject.GetComponent<Transform>().GetComponent<Renderer>().enabled = false;
                 GridElement ownScript = newSpriteObject.GetComponent<GridElement>();
-                if(matrixY > 0) {
+                if (matrixY > 0) {
                     GridElement leftNeighbour = ((GameObject)spritesLine[matrixY - 1]).GetComponent<GridElement>();
                     leftNeighbour.addNeighbour(ownScript);
                     ownScript.addNeighbour(leftNeighbour);
@@ -54,9 +56,9 @@ public class GameSetup : MonoBehaviour {
                 matrixY++;
             }
             sprites.Add(spritesLine);
-            if(matrixX > 0) {
-                ArrayList previousLine = (ArrayList) sprites[matrixX - 1];
-                for(int i=0; i < previousLine.Count; i++) {
+            if (matrixX > 0) {
+                ArrayList previousLine = (ArrayList)sprites[matrixX - 1];
+                for (int i = 0; i < previousLine.Count; i++) {
                     GridElement element1 = ((GameObject)spritesLine[i]).GetComponent<GridElement>();
                     GridElement element2 = ((GameObject)previousLine[i]).GetComponent<GridElement>();
                     element1.addNeighbour(element2);
@@ -96,17 +98,117 @@ public class GameSetup : MonoBehaviour {
     }
 
     public GridElement findClosestGridElement(Vector2 point) {
-        GridElement closest = ((GameObject)((ArrayList)sprites[0])[0]).GetComponent<GridElement>();
-        for(int i=0; i<sprites.Count; i++) {
-            ArrayList spriteLine = (ArrayList) sprites[i];
-            for(int j=0; j< spriteLine.Count; j++) {
-                GridElement element = ((GameObject) spriteLine[j]).GetComponent<GridElement>();
+        // Get a good estimate for the closest grid element
+
+        // screen percentage
+        float xPerc = mainCam.WorldToScreenPoint(new Vector3(point.x, point.y, 0f)).x / (Screen.width - (spriteSize / 2f));
+        float yPerc = mainCam.WorldToScreenPoint(new Vector3(point.x, point.y, 0f)).y / (Screen.height - (spriteSize / 2f));
+
+        int xEstimate = (int)Math.Round(sprites.Count * xPerc);
+        int yEstimate = (int)Math.Round(((ArrayList)sprites[0]).Count * yPerc);
+
+        // keep array within bounds
+        if (xEstimate >= sprites.Count) {
+            xEstimate = sprites.Count - 1;
+        }
+        if(xEstimate < 0) {
+            xEstimate = 0;
+        }
+        if (yEstimate >= ((ArrayList)sprites[0]).Count) {
+            yEstimate = ((ArrayList)sprites[0]).Count - 1;
+        }
+        if(yEstimate < 0) {
+            yEstimate = 0;
+        }
+
+        ArrayList line = (ArrayList)sprites[xEstimate];
+        GridElement estimate = ((GameObject)line[yEstimate]).GetComponent<GridElement>();
+
+        float estimateDistance = Vector2.Distance(estimate.transform.position, point);
+        bool foundClosest = false;
+
+        int countSteps = 0;
+        // move closer on x-axis
+        while (!foundClosest) {
+            int backupX = xEstimate;
+            if (estimate.transform.position.x < point.x) {
+                xEstimate++;
+                if (xEstimate >= sprites.Count) {
+                    xEstimate = sprites.Count - 1;
+                }
+            } else {
+                xEstimate--;
+                if (xEstimate < 0) {
+                    xEstimate = 0;
+                }
+            }
+            GridElement newEstimate = ((GameObject)((ArrayList)sprites[xEstimate])[yEstimate]).GetComponent<GridElement>();
+            if (estimateDistance > Vector2.Distance(newEstimate.transform.position, point)) {
+                estimate = newEstimate;
+                estimateDistance = Vector2.Distance(newEstimate.transform.position, point);
+                countSteps++;
+            } else {
+                foundClosest = true;
+                xEstimate = backupX;
+            }
+        }
+
+        foundClosest = false;
+
+        // move closer on y-axis
+        while (!foundClosest) {
+            int backupY = yEstimate;
+            if (estimate.transform.position.y < point.y) {
+                yEstimate++;
+                if (yEstimate >= ((ArrayList)sprites[0]).Count) {
+                    yEstimate = ((ArrayList)sprites[0]).Count - 1;
+                }
+            } else {
+                yEstimate--;
+                if (yEstimate < 0) {
+                    yEstimate = 0;
+                }
+            }
+            GridElement newEstimate = ((GameObject)((ArrayList)sprites[xEstimate])[yEstimate]).GetComponent<GridElement>();
+            if (estimateDistance > Vector2.Distance(newEstimate.transform.position, point)) {
+                estimate = newEstimate;
+                estimateDistance = Vector2.Distance(newEstimate.transform.position, point);
+                countSteps++;
+            } else {
+                foundClosest = true;
+                yEstimate = backupY;
+            }
+        }
+
+        if (debugMode) {
+            Debug.Log("CLOSEST GRID ELEMENT ------ point position: " + point + " --- element position: " + estimate.transform.position);
+            Debug.Log("point x: " + point.x + " point y: " + point.y);
+            Debug.Log("estimate x: " + estimate.transform.position.x + " estimate y: " + estimate.transform.position.y);
+            Debug.Log("found closest grid element in " + countSteps + " steps");
+        }
+
+        return estimate;
+
+        // inefficient way
+      /*GridElement closest = ((GameObject)((ArrayList)sprites[0])[0]).GetComponent<GridElement>();
+        for (int i = 0; i < sprites.Count; i++) {
+            ArrayList spriteLine = (ArrayList)sprites[i];
+            for (int j = 0; j < spriteLine.Count; j++) {
+                GridElement element = ((GameObject)spriteLine[j]).GetComponent<GridElement>();
                 if (Vector2.Distance(element.transform.position, point) < Vector2.Distance(closest.transform.position, point)) {
                     closest = element;
                 }
             }
         }
-        return closest;
+        if (closest != estimate) {
+            Debug.LogWarning("wrong element selected");
+            Debug.Log("CLOSEST GRID ELEMENT ------ point position: " + point + " --- element position: " + estimate.transform.position);
+            Debug.Log("correct x: " + point.x + " correct y: " + point.y);
+            Debug.Log("estimate x: " + estimate.transform.position.x + " estimate y: " + estimate.transform.position.y);
+            Debug.Log("correct distance: " + Vector2.Distance(closest.transform.position, point));
+            Debug.Log("estimate distance: " + Vector2.Distance(estimate.transform.position, point));
+        }
+        return closest;*/
     }
 
     public void resetGridForEnemySearch() {

@@ -42,7 +42,11 @@ public class GridElement : MonoBehaviour {
         bool containsWall = false;
 
         foreach (BoxCollider2D box in walls) {
-            if (box.bounds.Contains(new Vector2(transform.position.x + 0.02f, transform.position.y))) {
+            if (gameObject.GetComponent<Renderer>().bounds.Intersects(box.bounds)) {
+                containsWall = true;
+            }
+            // inefficient
+            /*if (box.bounds.Contains(new Vector2(transform.position.x + 0.02f, transform.position.y))) {
                 containsWall = true;
             }
             if (box.bounds.Contains(new Vector2(transform.position.x - 0.02f, transform.position.y))) {
@@ -53,7 +57,7 @@ public class GridElement : MonoBehaviour {
             }
             if (box.bounds.Contains(new Vector2(transform.position.x + 0.05f, transform.position.y - 0.02f))) {
                 containsWall = true;
-            }
+            }*/
         }
         return containsWall;
     }
@@ -63,7 +67,9 @@ public class GridElement : MonoBehaviour {
         bool containsEnemy = false;
         BoxCollider2D box = enemy.gameObject.GetComponent<BoxCollider2D>();
         if (box.bounds.Contains(transform.position)) {
+            if (GameSetup.debugMode) {
             Debug.Log("enemy found");
+            }
             containsEnemy = true;
         }
         return containsEnemy;

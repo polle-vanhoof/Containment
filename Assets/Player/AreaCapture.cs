@@ -38,7 +38,6 @@ public class AreaCapture : MonoBehaviour {
     public void createCollisionIfRequired(bool hitWall) {
         if (!controls.onSide) {
             if (validLastMovePoint) {
-                Debug.Log("creating collision box");
                 createCollisionBox(lastMovePoint, controls.rb.position, hitWall);
             }
             lastMovePoint = controls.rb.position;
@@ -48,7 +47,9 @@ public class AreaCapture : MonoBehaviour {
 
     IEnumerator BuildDelayedCollisionBox(Vector2 point1, Vector2 point2, bool hitWall, float delayTime) {
         yield return new WaitForSeconds(delayTime);
+        if (GameSetup.debugMode) {
         Debug.Log("Collision Box between (" + point1.x + "," + point1.y + ") and (" + point2.x + "," + point2.y + ")");
+        }
         Vector2 floodFillStartPoint;
         if (point1.x == point2.x) {
             Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
@@ -61,9 +62,9 @@ public class AreaCapture : MonoBehaviour {
             }
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(point1.x, yOffset);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
-            floodFillStartPoint = new Vector2(point1.x + 0.2f, point2.y);
+            floodFillStartPoint = new Vector2(point1.x + setup.spriteSize*2f, point2.y);
             if (hitWall && TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
-                floodFillStartPoint = new Vector2(point1.x - 0.2f, point2.y);
+                floodFillStartPoint = new Vector2(point1.x - setup.spriteSize*2f, point2.y);
             }
         } else {
             Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
@@ -76,9 +77,9 @@ public class AreaCapture : MonoBehaviour {
             }
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(xOffset, point1.y);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
-            floodFillStartPoint = new Vector2(point2.x, point1.y +0.2f);
+            floodFillStartPoint = new Vector2(point2.x, point1.y + setup.spriteSize*2f);
             if (hitWall && TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
-                floodFillStartPoint = new Vector2(point2.x, point1.y - 0.2f);
+                floodFillStartPoint = new Vector2(point2.x, point1.y - setup.spriteSize*2);
             }
         }
         if (hitWall) {
@@ -87,11 +88,13 @@ public class AreaCapture : MonoBehaviour {
         }
     }
 
-    public void floodFill(GridElement startElement) {
+    private void floodFill(GridElement startElement) {
         GridElement wallElement = null;
         Queue<GridElement> queue = new Queue<GridElement>();
         queue.Enqueue(startElement);
+        int count = 0;
         while (queue.Count != 0) {
+            count++;
             GridElement element = queue.Dequeue();
             if (element.capture(walls)) {
                 foreach (GridElement neighbour in element.getNeighbours()) {
@@ -107,16 +110,18 @@ public class AreaCapture : MonoBehaviour {
         // floodfill the wall as well
         queue.Enqueue(wallElement);
         while (queue.Count != 0) {
+            count++;
             GridElement element = queue.Dequeue();
-            if (element.captureWall(walls)) {
+            if (element != null && element.captureWall(walls)) {
                 foreach (GridElement neighbour in element.getNeighbours()) {
                     queue.Enqueue(neighbour);
                 }
             }
         }
+        Debug.Log(count);
     }
 
-    public bool TestForEnemy(GridElement startElement) {
+    private bool TestForEnemy(GridElement startElement) {
         setup.resetGridForEnemySearch();
         bool containsEnemy = false;
         Queue<GridElement> queue = new Queue<GridElement>();
