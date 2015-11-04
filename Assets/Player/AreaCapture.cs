@@ -58,7 +58,7 @@ public class AreaCapture : MonoBehaviour {
         Vector2 floodFillStartPoint;
         if (point1.x == point2.x) {
             Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
-            newWall.GetComponent<BoxCollider2D>().size = new Vector2(setup.spriteSize/2f, Math.Abs(point1.y - point2.y));
+            newWall.GetComponent<BoxCollider2D>().size = new Vector2(setup.spriteSize, Math.Abs(point1.y - point2.y) + setup.spriteSize);
             float yOffset;
             if (point1.y < point2.y) {
                 yOffset = point1.y + Math.Abs(point1.y - point2.y) / 2.0f;
@@ -87,7 +87,7 @@ public class AreaCapture : MonoBehaviour {
             }
         } else {
             Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
-            newWall.GetComponent<BoxCollider2D>().size = new Vector2(Math.Abs(point1.x - point2.x), setup.spriteSize/2f);
+            newWall.GetComponent<BoxCollider2D>().size = new Vector2(Math.Abs(point1.x - point2.x) + setup.spriteSize, setup.spriteSize);
             float xOffset;
             if (point1.x < point2.x) {
                 xOffset = point1.x + Math.Abs(point1.x - point2.x) / 2.0f; ;

@@ -38,7 +38,7 @@ public class PlayerControls : MonoBehaviour {
         float maxX = float.MinValue;
         float minY = float.MaxValue;
         float maxY = float.MinValue;
-        for(int i=0; i<colInfo.contacts.Length; i++) {
+        for (int i = 0; i < colInfo.contacts.Length; i++) {
             Vector2 point = colInfo.contacts[i].point;
             if (point.x < minX)
                 minX = point.x;
@@ -52,29 +52,38 @@ public class PlayerControls : MonoBehaviour {
         Vector2 playerCentre = new Vector2(transform.position.x, transform.position.y);
         Vector2 colpoint = new Vector2(minX + (maxX - minX) / 2f, minY + (maxY - minY) / 2f);
         Vector2 angle = playerCentre - colpoint;
-        double angleX = Math.Round(angle.x,1);
+        double angleX = Math.Round(angle.x, 1);
         double angleY = Math.Round(angle.y, 1);
         String dir = "none";
-        if(angleX == 0) {
-            if(angleY == 0.1) {
+        if (angleX == 0) {
+            if (angleY > 0) {
                 dir = "down";
-            }else if(angleY == -0.1) {
+            } else if (angleY < 0) {
                 dir = "up";
             }
-        }else if(angleY == 0) {
-            if (angleX == 0.1) {
+        } else if (angleY == 0) {
+            if (angleX > 0) {
                 dir = "left";
-            } else if (angleX == -0.1) {
+            } else if (angleX < 0) {
                 dir = "right";
             }
         }
-        if(angleX != 0 && angleY != 0) {
+        if (angleX != 0 && angleY != 0) {
             dir = "err";
         }
-        Debug.Log("collision!: " +dir);
+        if (GameSetup.debugMode) {
+            Debug.Log("collision detected on player side: " + dir);
+        }
+        if(dir == "err") {
+            Debug.LogWarning("------Bad collision!------");
+            Debug.LogWarning("number of collision points: " + colInfo.contacts.Length);
+            Debug.LogWarning("collision point average: " + angle.x + " " + angle.y);
+            Debug.LogWarning("point1: " + colInfo.contacts[0].point);
+            Debug.LogWarning("point2: " + colInfo.contacts[1].point);
+        }
 
         // if the player did not collide in the direction he was going => corner problem, do nothing
-        if(direction != dir) {
+        if (direction != dir) {
             return;
         }
 
@@ -88,10 +97,10 @@ public class PlayerControls : MonoBehaviour {
         // create new captured area and move player in right direction
         if (!onSide) {
             if (GameSetup.debugMode) {
-            Debug.Log("building wall");
+                Debug.Log("building wall");
             }
             areaCapture.createCollisionIfRequired(true);
-        } else{
+        } else {
             if (lastWallSide == "bottom") {
                 moveDown();
             }

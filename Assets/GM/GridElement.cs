@@ -42,9 +42,14 @@ public class GridElement : MonoBehaviour {
         bool containsWall = false;
 
         foreach (BoxCollider2D box in walls) {
-            if (gameObject.GetComponent<Renderer>().bounds.Intersects(box.bounds)) {
+            if (box.bounds.Contains(transform.position)) {
                 containsWall = true;
             }
+            // creates bad looking corner points
+            /*if (gameObject.GetComponent<Renderer>().bounds.Intersects(box.bounds)) {
+                containsWall = true;
+            }*/
+
             // inefficient
             /*if (box.bounds.Contains(new Vector2(transform.position.x + 0.02f, transform.position.y))) {
                 containsWall = true;
