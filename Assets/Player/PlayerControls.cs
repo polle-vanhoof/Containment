@@ -32,49 +32,76 @@ public class PlayerControls : MonoBehaviour {
             firstCollision = false;
             return;
         }
-        Debug.Log("collision!");
+
+        // determine the side of the player that collided
+        float minX = float.MaxValue;
+        float maxX = float.MinValue;
+        float minY = float.MaxValue;
+        float maxY = float.MinValue;
+        for(int i=0; i<colInfo.contacts.Length; i++) {
+            Vector2 point = colInfo.contacts[i].point;
+            if (point.x < minX)
+                minX = point.x;
+            if (point.x > maxX)
+                maxX = point.x;
+            if (point.y < minY)
+                minY = point.y;
+            if (point.y > maxY)
+                maxY = point.y;
+        }
+        Vector2 playerCentre = new Vector2(transform.position.x, transform.position.y);
+        Vector2 colpoint = new Vector2(minX + (maxX - minX) / 2f, minY + (maxY - minY) / 2f);
+        Vector2 angle = playerCentre - colpoint;
+        double angleX = Math.Round(angle.x,1);
+        double angleY = Math.Round(angle.y, 1);
+        String dir = "none";
+        if(angleX == 0) {
+            if(angleY == 0.1) {
+                dir = "down";
+            }else if(angleY == -0.1) {
+                dir = "up";
+            }
+        }else if(angleY == 0) {
+            if (angleX == 0.1) {
+                dir = "left";
+            } else if (angleX == -0.1) {
+                dir = "right";
+            }
+        }
+        if(angleX != 0 && angleY != 0) {
+            dir = "err";
+        }
+        Debug.Log("collision!: " +dir);
+
+        // if the player did not collide in the direction he was going => corner problem, do nothing
+        if(direction != dir) {
+            return;
+        }
+
         // stop generating trail
         trailRenderer.stopTrail();
         String lastWallSide = wallSide;
         // set wall side
         setWallSide();
-        Debug.Log(wallSide);
+        //Debug.Log(wallSide);
 
-        // create new captured area
+        // create new captured area and move player in right direction
         if (!onSide) {
+            if (GameSetup.debugMode) {
             Debug.Log("building wall");
+            }
             areaCapture.createCollisionIfRequired(true);
-        } else {
+        } else{
             if (lastWallSide == "bottom") {
-                /*if (direction.Equals("right")) {
-                    wallSide = "left";
-                } else {
-                    wallSide = "right";
-                }*/
                 moveDown();
             }
             if (lastWallSide == "top") {
-                /*if (direction.Equals("right")) {
-                    wallSide = "left";
-                } else {
-                    wallSide = "right";
-                }*/
                 moveUp();
             }
             if (lastWallSide == "left") {
-                /*if (direction.Equals("up")) {
-                    wallSide = "bottom";
-                } else {
-                    wallSide = "top";
-                }*/
                 moveLeft();
             }
             if (lastWallSide == "right") {
-                /*if (direction.Equals("up")) {
-                    wallSide = "bottom";
-                } else {
-                    wallSide = "top";
-                }*/
                 moveRight();
             }
         }

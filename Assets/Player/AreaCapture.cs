@@ -47,13 +47,18 @@ public class AreaCapture : MonoBehaviour {
 
     IEnumerator BuildDelayedCollisionBox(Vector2 point1, Vector2 point2, bool hitWall, float delayTime) {
         yield return new WaitForSeconds(delayTime);
+        GridElement e1 = setup.findClosestGridElement(point1);
+        GridElement e2 = setup.findClosestGridElement(point2);
+        point1 = new Vector2(e1.transform.position.x, e1.transform.position.y);
+        point2 = new Vector2(e2.transform.position.x, e2.transform.position.y);
+
         if (GameSetup.debugMode) {
-        Debug.Log("Collision Box between (" + point1.x + "," + point1.y + ") and (" + point2.x + "," + point2.y + ")");
+            Debug.Log("Collision Box between (" + point1.x + "," + point1.y + ") and (" + point2.x + "," + point2.y + ")");
         }
         Vector2 floodFillStartPoint;
         if (point1.x == point2.x) {
             Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
-            newWall.GetComponent<BoxCollider2D>().size = new Vector2(0.2f, Math.Abs(point1.y - point2.y));
+            newWall.GetComponent<BoxCollider2D>().size = new Vector2(setup.spriteSize/2f, Math.Abs(point1.y - point2.y));
             float yOffset;
             if (point1.y < point2.y) {
                 yOffset = point1.y + Math.Abs(point1.y - point2.y) / 2.0f;
@@ -63,10 +68,10 @@ public class AreaCapture : MonoBehaviour {
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(point1.x, yOffset);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
             float backOffset = setup.spriteSize + 0.05f;
-            if(controls.direction.Equals("up")) {
+            if (controls.direction.Equals("up")) {
                 backOffset = -backOffset;
             }
-            floodFillStartPoint = new Vector2(point1.x + setup.spriteSize*2f, point2.y + backOffset);
+            floodFillStartPoint = new Vector2(point1.x + setup.spriteSize * 2f, point2.y + backOffset);
             if (hitWall) {
                 Vector2 newPlayerloc;
                 if (TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
@@ -75,14 +80,14 @@ public class AreaCapture : MonoBehaviour {
                     controls.moveRight();
                     floodFillStartPoint = new Vector2(point1.x - setup.spriteSize * 2f, point2.y + backOffset);
                 } else {
-                    newPlayerloc = new Vector2(point2.x - (setup.spriteSize+0.15f), point2.y);
+                    newPlayerloc = new Vector2(point2.x - (setup.spriteSize + 0.15f), point2.y);
                     controls.setPlayerLocation(newPlayerloc);
                     controls.moveLeft();
                 }
             }
         } else {
             Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
-            newWall.GetComponent<BoxCollider2D>().size = new Vector2(Math.Abs(point1.x - point2.x), 0.2f);
+            newWall.GetComponent<BoxCollider2D>().size = new Vector2(Math.Abs(point1.x - point2.x), setup.spriteSize/2f);
             float xOffset;
             if (point1.x < point2.x) {
                 xOffset = point1.x + Math.Abs(point1.x - point2.x) / 2.0f; ;
@@ -95,7 +100,7 @@ public class AreaCapture : MonoBehaviour {
             if (controls.direction.Equals("right")) {
                 backOffset = -backOffset;
             }
-            floodFillStartPoint = new Vector2(point2.x + backOffset, point1.y + setup.spriteSize*2f);
+            floodFillStartPoint = new Vector2(point2.x + backOffset, point1.y + setup.spriteSize * 2f);
             if (hitWall) {
                 Vector2 newPlayerLoc;
                 if (TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
@@ -128,7 +133,7 @@ public class AreaCapture : MonoBehaviour {
                 foreach (GridElement neighbour in element.getNeighbours()) {
                     queue.Enqueue(neighbour);
                 }
-            }else if(wallElement == null) {
+            } else if (wallElement == null) {
                 if (element.ContainsWall(walls) && !element.iscaptured()) {
                     wallElement = element;
                 }
@@ -146,7 +151,9 @@ public class AreaCapture : MonoBehaviour {
                 }
             }
         }
+        if (GameSetup.debugMode) {
         Debug.Log("filling " + count + " grid elements");
+        }
     }
 
     private bool TestForEnemy(GridElement startElement) {
