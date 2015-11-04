@@ -88,7 +88,9 @@ public class PlayerControls : MonoBehaviour {
         }
 
         // stop generating trail
-        trailRenderer.stopTrail();
+        if (!areaCapture.colliderPartOfPath(colInfo.gameObject.GetComponent<BoxCollider2D>())) {
+            trailRenderer.stopTrail();
+        }
         String lastWallSide = wallSide;
         // set wall side
         setWallSide();
@@ -99,7 +101,7 @@ public class PlayerControls : MonoBehaviour {
             if (GameSetup.debugMode) {
                 Debug.Log("building wall");
             }
-            areaCapture.createCollisionIfRequired(true);
+            areaCapture.createCollisionIfRequired(true, colInfo.gameObject.GetComponent<BoxCollider2D>());
         } else {
             if (lastWallSide == "bottom") {
                 moveDown();
@@ -121,13 +123,18 @@ public class PlayerControls : MonoBehaviour {
                 colInfo.gameObject.name == "bottomWall") {
             onSide = true;
         } else {
-            foreach (BoxCollider2D collider in areaCapture.walls) {
-                if (collider == colInfo.collider) {
-                    onSide = true;
+            if (!areaCapture.colliderPartOfPath(colInfo.gameObject.GetComponent<BoxCollider2D>())) {
+                foreach (BoxCollider2D collider in areaCapture.walls) {
+                    if (collider == colInfo.collider) {
+                        onSide = true;
+                    }
                 }
-            }
+            }  
         }
 
+        if (!areaCapture.colliderPartOfPath(colInfo.gameObject.GetComponent<BoxCollider2D>())) {
+            areaCapture.setLastMovePointNull();
+        }
 
 
         /*if (colInfo.gameObject.name == "rightWall" ||
@@ -152,7 +159,7 @@ public class PlayerControls : MonoBehaviour {
         if (colInfo.gameObject.name == "bottomWall")
             lastYMovementDown = false;*/
 
-        areaCapture.setLastMovePointNull();
+
     }
 
     public void moveDown() {
@@ -163,7 +170,7 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
-        areaCapture.createCollisionIfRequired(false);
+        areaCapture.createCollisionIfRequired(false,null);
     }
 
     public void moveUp() {
@@ -174,7 +181,7 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
-        areaCapture.createCollisionIfRequired(false);
+        areaCapture.createCollisionIfRequired(false, null);
     }
 
     public void moveLeft() {
@@ -185,7 +192,7 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
-        areaCapture.createCollisionIfRequired(false);
+        areaCapture.createCollisionIfRequired(false, null);
     }
 
     public void moveRight() {
@@ -196,7 +203,7 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
-        areaCapture.createCollisionIfRequired(false);
+        areaCapture.createCollisionIfRequired(false, null);
     }
 
     void FixedUpdate() {

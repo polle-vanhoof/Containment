@@ -13,6 +13,8 @@ public class AreaCapture : MonoBehaviour {
 
     public Transform PrefabWall;
     public LinkedList<BoxCollider2D> walls = new LinkedList<BoxCollider2D>();
+    public LinkedList<BoxCollider2D> Pathwalls = new LinkedList<BoxCollider2D>();
+    public LinkedList<GridElement> additionalFillPoints = new LinkedList<GridElement>();
 
     void start() {
         walls.AddLast(setup.topWall);
@@ -21,8 +23,8 @@ public class AreaCapture : MonoBehaviour {
         walls.AddLast(setup.leftWall);
     }
 
-    private void createCollisionBox(Vector2 point1, Vector2 point2, bool hitWall) {
-        StartCoroutine(BuildDelayedCollisionBox(point1, point2, hitWall, 0.1f));
+    private void createCollisionBox(Vector2 point1, Vector2 point2, bool hitWall, BoxCollider2D targetWall) {
+        StartCoroutine(BuildDelayedCollisionBox(point1, point2, hitWall, targetWall, 0.1f));
     }
 
     public void setLastMovePointNull() {
@@ -30,22 +32,21 @@ public class AreaCapture : MonoBehaviour {
         validLastMovePoint = false;
     }
 
-    public void setLastMovePoint(Vector2 point) {
+    private void setLastMovePoint(Vector2 point) {
         lastMovePoint = point;
         validLastMovePoint = true;
     }
 
-    public void createCollisionIfRequired(bool hitWall) {
+    public void createCollisionIfRequired(bool hitWall, BoxCollider2D targetWall) {
         if (!controls.onSide) {
             if (validLastMovePoint) {
-                createCollisionBox(lastMovePoint, controls.rb.position, hitWall);
+                createCollisionBox(lastMovePoint, controls.rb.position, hitWall, targetWall);
             }
-            lastMovePoint = controls.rb.position;
-            validLastMovePoint = true;
+            setLastMovePoint(controls.rb.position);
         }
     }
 
-    IEnumerator BuildDelayedCollisionBox(Vector2 point1, Vector2 point2, bool hitWall, float delayTime) {
+    IEnumerator BuildDelayedCollisionBox(Vector2 point1, Vector2 point2, bool hitWall, BoxCollider2D targetWall, float delayTime) {
         yield return new WaitForSeconds(delayTime);
         GridElement e1 = setup.findClosestGridElement(point1);
         GridElement e2 = setup.findClosestGridElement(point2);
@@ -67,22 +68,32 @@ public class AreaCapture : MonoBehaviour {
             }
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(point1.x, yOffset);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
+            Pathwalls.AddLast(newWall.GetComponent<BoxCollider2D>());
             float backOffset = setup.spriteSize + 0.05f;
             if (controls.direction.Equals("up")) {
                 backOffset = -backOffset;
             }
-            floodFillStartPoint = new Vector2(point1.x + setup.spriteSize * 2f, point2.y + backOffset);
+            floodFillStartPoint = new Vector2(point1.x + setup.spriteSize, point2.y + backOffset);
             if (hitWall) {
                 Vector2 newPlayerloc;
                 if (TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
                     newPlayerloc = new Vector2(point2.x + (setup.spriteSize + 0.15f), point2.y);
                     controls.setPlayerLocation(newPlayerloc);
                     controls.moveRight();
-                    floodFillStartPoint = new Vector2(point1.x - setup.spriteSize * 2f, point2.y + backOffset);
+                    floodFillStartPoint = new Vector2(point1.x - setup.spriteSize, point2.y + backOffset);
                 } else {
-                    newPlayerloc = new Vector2(point2.x - (setup.spriteSize + 0.15f), point2.y);
+                    newPlayerloc = new Vector2(point2.x - setup.spriteSize, point2.y);
                     controls.setPlayerLocation(newPlayerloc);
                     controls.moveLeft();
+                }
+            }
+            if (colliderPartOfPath(targetWall)) {
+                if (TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
+                    GridElement element = setup.findClosestGridElement(new Vector2(point1.x - setup.spriteSize, point2.y + backOffset));
+                    additionalFillPoints.AddLast(element);
+                } else {
+                    GridElement element = setup.findClosestGridElement(floodFillStartPoint);
+                    additionalFillPoints.AddLast(element);
                 }
             }
         } else {
@@ -96,26 +107,37 @@ public class AreaCapture : MonoBehaviour {
             }
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(xOffset, point1.y);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
+            Pathwalls.AddLast(newWall.GetComponent<BoxCollider2D>());
             float backOffset = setup.spriteSize + 0.05f;
             if (controls.direction.Equals("right")) {
                 backOffset = -backOffset;
             }
-            floodFillStartPoint = new Vector2(point2.x + backOffset, point1.y + setup.spriteSize * 2f);
+            floodFillStartPoint = new Vector2(point2.x + backOffset, point1.y + setup.spriteSize);
             if (hitWall) {
                 Vector2 newPlayerLoc;
                 if (TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
                     newPlayerLoc = new Vector2(point2.x, point2.y + (setup.spriteSize + 0.15f));
                     controls.setPlayerLocation(newPlayerLoc);
                     controls.moveUp();
-                    floodFillStartPoint = new Vector2(point2.x + backOffset, point1.y - setup.spriteSize * 2);
+                    floodFillStartPoint = new Vector2(point2.x + backOffset, point1.y - setup.spriteSize);
                 } else {
-                    newPlayerLoc = new Vector2(point2.x, point2.y - (setup.spriteSize + 0.15f));
+                    newPlayerLoc = new Vector2(point2.x, point2.y - setup.spriteSize);
                     controls.setPlayerLocation(newPlayerLoc);
                     controls.moveDown();
                 }
             }
+            if (colliderPartOfPath(targetWall)) {
+                if (TestForEnemy(setup.findClosestGridElement(floodFillStartPoint))) {
+                    GridElement element = setup.findClosestGridElement(new Vector2(point1.x - setup.spriteSize, point2.y + backOffset));
+                    additionalFillPoints.AddLast(element);
+                } else {
+                    GridElement element = setup.findClosestGridElement(floodFillStartPoint);
+                    additionalFillPoints.AddLast(element);
+                }
+            }
         }
-        if (hitWall) {
+        if (hitWall && !colliderPartOfPath(targetWall)) {
+            Pathwalls.Clear();
             GridElement closestPoint = setup.findClosestGridElement(floodFillStartPoint);
             floodFill(closestPoint);
         }
@@ -125,6 +147,12 @@ public class AreaCapture : MonoBehaviour {
         GridElement wallElement = null;
         Queue<GridElement> queue = new Queue<GridElement>();
         queue.Enqueue(startElement);
+
+        // add additional fillpoints for special cases
+        foreach (GridElement point in additionalFillPoints) {
+            queue.Enqueue(point);
+        }
+
         int count = 0;
         while (queue.Count != 0) {
             count++;
@@ -151,8 +179,11 @@ public class AreaCapture : MonoBehaviour {
                 }
             }
         }
+
+        additionalFillPoints.Clear();
+
         if (GameSetup.debugMode) {
-        Debug.Log("filling " + count + " grid elements");
+            Debug.Log("filling " + count + " grid elements");
         }
     }
 
@@ -174,6 +205,16 @@ public class AreaCapture : MonoBehaviour {
             }
         }
         return containsEnemy;
+    }
+
+    public bool colliderPartOfPath(BoxCollider2D collider) {
+        if(collider == null) {
+            return false;
+        }
+        if (Pathwalls.Contains(collider)) {
+            return true;
+        }
+        return false;
     }
 
 }
