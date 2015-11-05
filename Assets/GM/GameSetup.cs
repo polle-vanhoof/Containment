@@ -11,6 +11,7 @@ public class GameSetup : MonoBehaviour {
     public Rigidbody2D player;
     public Rigidbody2D enemy;
     public GameObject levelCompleteSprite;
+    public GameObject gameOverSprite;
 
     public BoxCollider2D topWall;
     public BoxCollider2D bottomWall;
@@ -33,8 +34,9 @@ public class GameSetup : MonoBehaviour {
         // set required capture percentage
         completionPercentage = 0.7f;
 
-        // hide level complete sprite
+        // hide level complete sprite and game over sprite
         setUpLevelComplete();
+        setUpGameOver();
 
         // Move each wall to its edge location
         setUpWalls();
@@ -51,6 +53,12 @@ public class GameSetup : MonoBehaviour {
         levelCompleteSprite.GetComponent<Renderer>().enabled = false;
         levelCompleteSprite.transform.position = new Vector2(0, 0);
         levelCompleteSprite.transform.localScale = new Vector2(2.5f, 2.5f);
+    }
+
+    private void setUpGameOver() {
+        gameOverSprite.GetComponent<Renderer>().enabled = false;
+        gameOverSprite.transform.position = new Vector2(0, 0);
+        gameOverSprite.transform.localScale = new Vector2(3.5f, 3.5f);
     }
 
     private void generateGrid() {
@@ -96,6 +104,7 @@ public class GameSetup : MonoBehaviour {
         player.position = new Vector2(playerStartX, playerStartY);
     }
 
+
     private void setUpWalls() {
         topWall.size = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(Screen.width * 2f, 0f, 0f)).x, 1f);
         topWall.offset = new Vector2(0f, mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height, 0f)).y + 0.5f);
@@ -114,14 +123,17 @@ public class GameSetup : MonoBehaviour {
     public void gameOver() {
         player.velocity = new Vector2(0, 0);
         enemy.velocity = new Vector2(0, 0);
+        enemy.GetComponent<Rigidbody2D>().angularVelocity = 0;
+        gameOverSprite.GetComponent<Renderer>().enabled = true;
     }
 
 
     public void levelComplete() {
         player.velocity = new Vector2(0, 0);
         enemy.velocity = new Vector2(0, 0);
-        levelCompleteSprite.GetComponent<Renderer>().enabled = true;
         enemy.GetComponent<Rigidbody2D>().angularVelocity = 0;
+        levelCompleteSprite.GetComponent<Renderer>().enabled = true;
+        
     }
 
     public GridElement findClosestGridElement(Vector2 point) {

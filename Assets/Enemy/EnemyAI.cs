@@ -6,6 +6,7 @@ public class EnemyAI : MonoBehaviour {
 
     public int totalEnemySpeed = 20;
     public GameSetup setup;
+    public AreaCapture areaCapture;
 
     void Start() {
         // random number between 0 and 1
@@ -35,6 +36,9 @@ public class EnemyAI : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D colInfo) {
         if(colInfo.collider.tag == "Player") {
+            setup.gameOver();
+        }
+        if (areaCapture.colliderPartOfPath(colInfo.gameObject.GetComponent<BoxCollider2D>())){
             setup.gameOver();
         }
     }

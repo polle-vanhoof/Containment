@@ -7,6 +7,7 @@ public class PlayerControls : MonoBehaviour {
 
     public TrailRendererLevel trailRenderer;
     public AreaCapture areaCapture;
+    public GameSetup setup;
 
     public float speed = 5;
     public float sensitivity = 3;
@@ -30,6 +31,10 @@ public class PlayerControls : MonoBehaviour {
         if (firstCollision) {
             Debug.Log("first collision");
             firstCollision = false;
+            return;
+        }
+
+        if(colInfo.collider.tag == "Enemy") {
             return;
         }
 
@@ -74,7 +79,7 @@ public class PlayerControls : MonoBehaviour {
         if (GameSetup.debugMode) {
             Debug.Log("collision detected on player side: " + dir);
         }
-        if(dir == "err") {
+        if (dir == "err") {
             Debug.LogWarning("------Bad collision!------");
             Debug.LogWarning("number of collision points: " + colInfo.contacts.Length);
             Debug.LogWarning("collision point average: " + angle.x + " " + angle.y);
@@ -129,7 +134,7 @@ public class PlayerControls : MonoBehaviour {
                         onSide = true;
                     }
                 }
-            }  
+            }
         }
 
         if (!areaCapture.colliderPartOfPath(colInfo.gameObject.GetComponent<BoxCollider2D>())) {
@@ -170,7 +175,7 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
-        areaCapture.createCollisionIfRequired(false,null);
+        areaCapture.createCollisionIfRequired(false, null);
     }
 
     public void moveUp() {
@@ -229,6 +234,19 @@ public class PlayerControls : MonoBehaviour {
                     moveUp();
                 } else if (touch.deltaPosition.y < -sensitivity) {
                     moveDown();
+                }
+            }
+        }
+
+        // check if enemy hits path
+        if (trailRenderer.GetComponent<TrailRenderer>().enabled == true) {
+            if (areaCapture.getLastMovePoint() != null) {
+                RaycastHit2D hit = Physics2D.Linecast(transform.position, areaCapture.getLastMovePoint(), (1 << 10));
+                Debug.DrawLine(transform.position, areaCapture.getLastMovePoint(), Color.white);
+                if (hit.collider != null) {
+                    if (hit.collider.gameObject.tag == "Enemy") {
+                        setup.gameOver();
+                    }
                 }
             }
         }

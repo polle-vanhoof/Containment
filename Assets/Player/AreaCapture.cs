@@ -225,4 +225,8 @@ public class AreaCapture : MonoBehaviour {
         return false;
     }
 
+    public Vector2 getLastMovePoint() {
+        return lastMovePoint;
+    }
+
 }
