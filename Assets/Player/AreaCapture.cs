@@ -11,6 +11,7 @@ public class AreaCapture : MonoBehaviour {
     private Vector2 lastMovePoint = Vector2.zero;
     public GameSetup setup;
 
+    private int gridElementsCaptured;
     public Transform PrefabWall;
     public LinkedList<BoxCollider2D> walls = new LinkedList<BoxCollider2D>();
     public LinkedList<BoxCollider2D> Pathwalls = new LinkedList<BoxCollider2D>();
@@ -155,9 +156,9 @@ public class AreaCapture : MonoBehaviour {
 
         int count = 0;
         while (queue.Count != 0) {
-            count++;
             GridElement element = queue.Dequeue();
             if (element.capture(walls)) {
+                count++;
                 foreach (GridElement neighbour in element.getNeighbours()) {
                     queue.Enqueue(neighbour);
                 }
@@ -174,6 +175,7 @@ public class AreaCapture : MonoBehaviour {
             count++;
             GridElement element = queue.Dequeue();
             if (element != null && element.captureWall(walls)) {
+                count++;
                 foreach (GridElement neighbour in element.getNeighbours()) {
                     queue.Enqueue(neighbour);
                 }
@@ -181,6 +183,12 @@ public class AreaCapture : MonoBehaviour {
         }
 
         additionalFillPoints.Clear();
+        gridElementsCaptured += count;
+
+        float percentageCaptured = (gridElementsCaptured * 1.0f) / (setup.numberOfGridElements*1.0f);
+        if (percentageCaptured > setup.completionPercentage) {
+            setup.levelComplete();
+        }
 
         if (GameSetup.debugMode) {
             Debug.Log("filling " + count + " grid elements");
