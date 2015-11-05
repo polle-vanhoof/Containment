@@ -32,7 +32,7 @@ public class GameSetup : MonoBehaviour {
         //Screen.orientation = ScreenOrientation.LandscapeLeft;
 
         // set required capture percentage
-        completionPercentage = 0.7f;
+        completionPercentage = 0.85f;
 
         // hide level complete sprite and game over sprite
         setUpLevelComplete();

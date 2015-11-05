@@ -38,6 +38,14 @@ public class AreaCapture : MonoBehaviour {
         validLastMovePoint = true;
     }
 
+    public Vector2 getLastMovePoint() {
+        return lastMovePoint;
+    }
+
+    public bool isValidLastMovePoint() {
+        return validLastMovePoint;
+    }
+
     public void createCollisionIfRequired(bool hitWall, BoxCollider2D targetWall) {
         if (!controls.onSide) {
             if (validLastMovePoint) {
@@ -225,8 +233,8 @@ public class AreaCapture : MonoBehaviour {
         return false;
     }
 
-    public Vector2 getLastMovePoint() {
-        return lastMovePoint;
+    public void resetCapturePoints() {
+        gridElementsCaptured = 0;
     }
 
 }
