@@ -162,6 +162,7 @@ public class PlayerControls : MonoBehaviour {
     }
 
     public void moveDown() {
+        Debug.Log("moving down");
         rb.velocity = new Vector2(0, -speed);
         //lastYMovementDown = true;
         direction = "down";
@@ -173,6 +174,7 @@ public class PlayerControls : MonoBehaviour {
     }
 
     public void moveUp() {
+        Debug.Log("moving up");
         rb.velocity = new Vector2(0, speed);
         //lastYMovementDown = false;
         direction = "up";
@@ -184,6 +186,7 @@ public class PlayerControls : MonoBehaviour {
     }
 
     public void moveLeft() {
+        Debug.Log("moving left");
         rb.velocity = new Vector2(-speed, 0);
         //lastXMovementLeft = true;
         direction = "left";
@@ -195,6 +198,7 @@ public class PlayerControls : MonoBehaviour {
     }
 
     public void moveRight() {
+        Debug.Log("moving right");
         rb.velocity = new Vector2(speed, 0);
         //lastXMovementLeft = false;
         direction = "right";
@@ -244,7 +248,7 @@ public class PlayerControls : MonoBehaviour {
                 }
             }
         }
-        /*
+        
         // check if you are about to go past a corner of a wall
         Vector2 rayDir = new Vector2(0, 1);
         if (wallSide == "bottom") {
@@ -260,7 +264,7 @@ public class PlayerControls : MonoBehaviour {
             rayDir = new Vector2(1, 0);
         }
         RaycastHit2D wallTest = Physics2D.Raycast(rb.position, rayDir, Mathf.Infinity, (1 << 11));
-        if (wallTest.collider != null) {
+        if (wallTest.collider != null && badWall != null) {
             if (currentWall != wallTest.collider.gameObject.GetComponent<BoxCollider2D>() && badWall != wallTest.collider.gameObject.GetComponent<BoxCollider2D>()) {
                 Debug.Log("different " + wallSide);
                 rb.position = setup.findClosestGridElement(rb.position).transform.position;
@@ -269,21 +273,21 @@ public class PlayerControls : MonoBehaviour {
                 if (wallSide == "bottom") {
                     moveUp();
                     if(lastDir == "left") {
-                        Debug.Log("set wallside right");
-                        wallSide = "right";
-                    } else {
+                        Debug.Log("set wallside left");
                         wallSide = "left";
+                    } else {
+                        wallSide = "right";
                     }
                 }
-                if (wallSide == "top") {
+                else if (wallSide == "top") {
                     moveDown();
                     if (lastDir == "left") {
-                        wallSide = "right";
-                    } else {
                         wallSide = "left";
+                    } else {
+                        wallSide = "right";
                     }
                 }
-                if (wallSide == "right") {
+                else if (wallSide == "right") {
                     moveLeft();
                     if (lastDir == "up") {
                         wallSide = "top";
@@ -291,17 +295,18 @@ public class PlayerControls : MonoBehaviour {
                         wallSide = "bottom";
                     }
                 }
-                if (wallSide == "left") {
+                else if (wallSide == "left") {
                     moveRight();
-                    if (lastDir == "down") {
+                    if (lastDir == "up") {
                         wallSide = "top";
                     } else {
                         wallSide = "bottom";
                     }
                 }
                 currentWall = badWall;
+                badWall = null;
             }
-        }*/
+        }
     }
 
 
