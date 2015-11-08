@@ -126,10 +126,10 @@ public class GameSetup : MonoBehaviour {
 
 
     public void gameOver() {
-        /*player.velocity = new Vector2(0, 0);
+        player.velocity = new Vector2(0, 0);
         enemy.velocity = new Vector2(0, 0);
         enemy.GetComponent<Rigidbody2D>().angularVelocity = 0;
-        gameOverSprite.GetComponent<Renderer>().enabled = true;*/
+        gameOverSprite.GetComponent<Renderer>().enabled = true;
     }
 
 
