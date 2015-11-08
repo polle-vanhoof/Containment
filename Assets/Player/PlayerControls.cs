@@ -176,6 +176,9 @@ public class PlayerControls : MonoBehaviour {
     }
 
     public void moveDown() {
+        if (!onSide && direction.Equals("up")) {
+            return;
+        }
         Debug.Log("moving down");
         rb.velocity = new Vector2(0, -speed);
         direction = "down";
@@ -187,6 +190,9 @@ public class PlayerControls : MonoBehaviour {
     }
 
     public void moveUp() {
+        if (!onSide && direction.Equals("down")) {
+            return;
+        }
         Debug.Log("moving up");
         rb.velocity = new Vector2(0, speed);
         direction = "up";
@@ -198,6 +204,9 @@ public class PlayerControls : MonoBehaviour {
     }
 
     public void moveLeft() {
+        if (!onSide && direction.Equals("right")) {
+            return;
+        }
         Debug.Log("moving left");
         rb.velocity = new Vector2(-speed, 0);
         direction = "left";
@@ -209,6 +218,9 @@ public class PlayerControls : MonoBehaviour {
     }
 
     public void moveRight() {
+        if (!onSide && direction.Equals("left")) {
+            return;
+        }
         Debug.Log("moving right");
         rb.velocity = new Vector2(speed, 0);
         direction = "right";
@@ -284,7 +296,12 @@ public class PlayerControls : MonoBehaviour {
             }
         }
 
-        // check if you are about to go past a corner of a wall
+        // check if you are about to go past a corner of a wall and act accordingly
+        outerCornerFollow();
+        
+    }
+
+    private void outerCornerFollow() {
         if (onSide) {
             Vector2 rayDir = new Vector2(0, 1); // raycast towards wall you are following
             Vector2 rayOffset = new Vector2(0, 0);
