@@ -12,6 +12,7 @@ public class GameSetup : MonoBehaviour {
     public Rigidbody2D enemy;
     public GameObject levelCompleteSprite;
     public GameObject gameOverSprite;
+    public AreaCapture areaCapture;
 
     public BoxCollider2D topWall;
     public BoxCollider2D bottomWall;
@@ -108,23 +109,27 @@ public class GameSetup : MonoBehaviour {
     private void setUpWalls() {
         topWall.size = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(Screen.width * 2f, 0f, 0f)).x, 1f);
         topWall.offset = new Vector2(0f, mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height, 0f)).y + 0.5f);
+        areaCapture.wallOrientation.Add(topWall, "H");
 
         bottomWall.size = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(Screen.width * 2f, 0f, 0f)).x, 1f);
         bottomWall.offset = new Vector2(0f, mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).y - 0.5f);
+        areaCapture.wallOrientation.Add(bottomWall, "H");
 
         rightWall.size = new Vector2(1f, mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height * 2f, 0f)).y);
         rightWall.offset = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(Screen.width, 0f, 0f)).x + 0.6f, 0f);
+        areaCapture.wallOrientation.Add(rightWall, "V");
 
         leftWall.size = new Vector2(1f, mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height * 2f, 0f)).y);
         leftWall.offset = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).x - 0.5f, 0f);
+        areaCapture.wallOrientation.Add(leftWall, "V");
     }
 
 
     public void gameOver() {
-        player.velocity = new Vector2(0, 0);
+        /*player.velocity = new Vector2(0, 0);
         enemy.velocity = new Vector2(0, 0);
         enemy.GetComponent<Rigidbody2D>().angularVelocity = 0;
-        gameOverSprite.GetComponent<Renderer>().enabled = true;
+        gameOverSprite.GetComponent<Renderer>().enabled = true;*/
     }
 
 

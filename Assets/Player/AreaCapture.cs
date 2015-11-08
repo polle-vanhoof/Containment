@@ -14,8 +14,14 @@ public class AreaCapture : MonoBehaviour {
     private int gridElementsCaptured;
     public Transform PrefabWall;
     public LinkedList<BoxCollider2D> walls = new LinkedList<BoxCollider2D>();
+    public Dictionary<BoxCollider2D, String> wallOrientation = new Dictionary<BoxCollider2D, string>();
     public LinkedList<BoxCollider2D> Pathwalls = new LinkedList<BoxCollider2D>();
     public LinkedList<GridElement> additionalFillPoints = new LinkedList<GridElement>();
+
+    void OnGUI() {
+        GUI.skin.label.fontSize = 30;
+        GUI.Label(new Rect(0, 0, 120, 100), "" + walls.Count);
+    }
 
     void start() {
         walls.AddLast(setup.topWall);
@@ -68,6 +74,7 @@ public class AreaCapture : MonoBehaviour {
         Vector2 floodFillStartPoint;
         if (point1.x == point2.x) {
             Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
+            newWall.name = newWall.name + " " + (walls.Count+1);
             newWall.GetComponent<BoxCollider2D>().size = new Vector2(setup.spriteSize, Math.Abs(point1.y - point2.y) + setup.spriteSize);
             float yOffset;
             if (point1.y < point2.y) {
@@ -77,6 +84,7 @@ public class AreaCapture : MonoBehaviour {
             }
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(point1.x, yOffset);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
+            wallOrientation.Add(newWall.GetComponent<BoxCollider2D>(), "V");
             Pathwalls.AddLast(newWall.GetComponent<BoxCollider2D>());
             float backOffset = setup.spriteSize + 0.05f;
             if (controls.direction.Equals("up")) {
@@ -107,6 +115,7 @@ public class AreaCapture : MonoBehaviour {
             }
         } else {
             Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
+            newWall.name = newWall.name + " " + (walls.Count+1);
             newWall.GetComponent<BoxCollider2D>().size = new Vector2(Math.Abs(point1.x - point2.x) + setup.spriteSize, setup.spriteSize);
             float xOffset;
             if (point1.x < point2.x) {
@@ -116,6 +125,7 @@ public class AreaCapture : MonoBehaviour {
             }
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(xOffset, point1.y);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
+            wallOrientation.Add(newWall.GetComponent<BoxCollider2D>(), "H");
             Pathwalls.AddLast(newWall.GetComponent<BoxCollider2D>());
             float backOffset = setup.spriteSize + 0.05f;
             if (controls.direction.Equals("right")) {

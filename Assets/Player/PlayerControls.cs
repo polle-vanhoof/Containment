@@ -17,8 +17,14 @@ public class PlayerControls : MonoBehaviour {
     private String wallSide = "bottom";
     private bool firstCollision = true;
 
+    private String lastTouch = "";
+
+    // NOT RELIABLE, DO NOT USE FOR ANYTHING OTHER THAN CORNER MOVEMENT EDGE CASES
     private Collider2D currentWall;
     private Collider2D badWall;
+    private Collider2D earlyDetection;
+    private Collider2D lastWall;
+    // END NOT RELIABLE
 
 
     public Rigidbody2D rb;
@@ -44,6 +50,12 @@ public class PlayerControls : MonoBehaviour {
 
         Debug.Log("collision");
 
+        // reset early detection at every wall collision
+        earlyDetection = null;
+
+        // reset swipe lock
+        lastTouch = "";
+
         // determine the side of the player that collided
         String dir = getCollisionSide(colInfo);
         if (GameSetup.debugMode) {
@@ -51,6 +63,7 @@ public class PlayerControls : MonoBehaviour {
         }
 
         if (direction == dir && !areaCapture.colliderPartOfPath(colInfo.gameObject.GetComponent<BoxCollider2D>())) {
+            Debug.Log("setting current wall");
             currentWall = colInfo.gameObject.GetComponent<BoxCollider2D>();
         }
 
@@ -89,6 +102,7 @@ public class PlayerControls : MonoBehaviour {
             if (lastWallSide == "right") {
                 moveRight();
             }
+            rb.position = (setup.findClosestGridElement(rb.position).transform.position);
         }
 
         if (colInfo.gameObject.name == "rightWall" ||
@@ -164,7 +178,6 @@ public class PlayerControls : MonoBehaviour {
     public void moveDown() {
         Debug.Log("moving down");
         rb.velocity = new Vector2(0, -speed);
-        //lastYMovementDown = true;
         direction = "down";
         if (onSide && wallSide == "bottom") {
             onSide = false;
@@ -176,7 +189,6 @@ public class PlayerControls : MonoBehaviour {
     public void moveUp() {
         Debug.Log("moving up");
         rb.velocity = new Vector2(0, speed);
-        //lastYMovementDown = false;
         direction = "up";
         if (onSide && wallSide == "top") {
             onSide = false;
@@ -188,7 +200,6 @@ public class PlayerControls : MonoBehaviour {
     public void moveLeft() {
         Debug.Log("moving left");
         rb.velocity = new Vector2(-speed, 0);
-        //lastXMovementLeft = true;
         direction = "left";
         if (onSide && wallSide == "left") {
             onSide = false;
@@ -200,7 +211,6 @@ public class PlayerControls : MonoBehaviour {
     public void moveRight() {
         Debug.Log("moving right");
         rb.velocity = new Vector2(speed, 0);
-        //lastXMovementLeft = false;
         direction = "right";
         if (onSide && wallSide == "right") {
             onSide = false;
@@ -210,28 +220,53 @@ public class PlayerControls : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        // reset early detection when moving manually
+        if (Input.GetKeyDown(KeyCode.DownArrow)) {
             moveDown();
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+            earlyDetection = null;
+        }
+        if (Input.GetKeyDown(KeyCode.UpArrow)) {
             moveUp();
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+            earlyDetection = null;
+        }
+        if (Input.GetKeyDown(KeyCode.LeftArrow)) {
             moveLeft();
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+            earlyDetection = null;
+        }
+        if (Input.GetKeyDown(KeyCode.RightArrow)) {
             moveRight();
+            earlyDetection = null;
+        }
 
         if (Input.touchCount == 1) {
             Touch touch = Input.touches[0];
             if (Math.Abs(touch.deltaPosition.x) > Math.Abs(touch.deltaPosition.y)) {
                 if (touch.deltaPosition.x > sensitivity) {
-                    moveRight();
+                    if (!lastTouch.Equals("right")) {
+                        moveRight();
+                        lastTouch = "right";
+                    }
+                    earlyDetection = null;
                 } else if (touch.deltaPosition.x < -sensitivity) {
-                    moveLeft();
+                    if (!lastTouch.Equals("left")) {
+                        moveLeft();
+                        lastTouch = "left";
+                    }
+                    earlyDetection = null;
                 }
             } else {
                 if (touch.deltaPosition.y > sensitivity) {
-                    moveUp();
+                    if (!lastTouch.Equals("up")) {
+                        moveUp();
+                        lastTouch = "up";
+                    }
+                    earlyDetection = null;
                 } else if (touch.deltaPosition.y < -sensitivity) {
-                    moveDown();
+                    if (!lastTouch.Equals("down")) {
+                        moveDown();
+                        lastTouch = "down";
+                    }
+                    earlyDetection = null;
                 }
             }
         }
@@ -248,63 +283,103 @@ public class PlayerControls : MonoBehaviour {
                 }
             }
         }
-        
+
         // check if you are about to go past a corner of a wall
-        Vector2 rayDir = new Vector2(0, 1);
-        if (wallSide == "bottom") {
-            rayDir = new Vector2(0, 1);
-        }
-        if (wallSide == "top") {
-            rayDir = new Vector2(0, -1);
-        }
-        if (wallSide == "right") {
-            rayDir = new Vector2(-1, 0);
-        }
-        if (wallSide == "left") {
-            rayDir = new Vector2(1, 0);
-        }
-        RaycastHit2D wallTest = Physics2D.Raycast(rb.position, rayDir, Mathf.Infinity, (1 << 11));
-        if (wallTest.collider != null && badWall != null) {
-            if (currentWall != wallTest.collider.gameObject.GetComponent<BoxCollider2D>() && badWall != wallTest.collider.gameObject.GetComponent<BoxCollider2D>()) {
-                Debug.Log("different " + wallSide);
-                rb.position = setup.findClosestGridElement(rb.position).transform.position;
-                String lastDir = direction;
-                Debug.Log("direction: " + lastDir);
-                if (wallSide == "bottom") {
-                    moveUp();
-                    if(lastDir == "left") {
-                        Debug.Log("set wallside left");
-                        wallSide = "left";
-                    } else {
-                        wallSide = "right";
+        if (onSide) {
+            Vector2 rayDir = new Vector2(0, 1); // raycast towards wall you are following
+            Vector2 rayOffset = new Vector2(0, 0);
+            if (wallSide == "bottom") {
+                rayDir = new Vector2(0, 1);
+            }
+            if (wallSide == "top") {
+                rayDir = new Vector2(0, -1);
+            }
+            if (wallSide == "right") {
+                rayDir = new Vector2(-1, 0);
+            }
+            if (wallSide == "left") {
+                rayDir = new Vector2(1, 0);
+            }
+            Vector2 earlyDir = new Vector2(0, 1); // raycast to the back of player
+            String rayWallAcceptOrientation = "";
+            if (direction == "down") {
+                earlyDir = new Vector2(0, 1);
+                rayWallAcceptOrientation = "V";
+            }
+            if (direction == "up") {
+                earlyDir = new Vector2(0, -1);
+                rayWallAcceptOrientation = "V";
+            }
+            if (direction == "right") {
+                earlyDir = new Vector2(-1, 0);
+                rayWallAcceptOrientation = "H";
+            }
+            if (direction == "left") {
+                earlyDir = new Vector2(1, 0);
+                rayWallAcceptOrientation = "H";
+            }
+            RaycastHit2D wallTest = Physics2D.Raycast((rb.position), rayDir, Mathf.Infinity, (1 << 11));
+            Debug.DrawRay(rb.position + rayOffset, (rayDir * 100), Color.green);
+            Debug.DrawRay(rb.position, (earlyDir * 100), Color.blue);
+            String colliderOrientation;
+            if (wallTest.collider != earlyDetection) {
+                areaCapture.wallOrientation.TryGetValue(wallTest.collider.gameObject.GetComponent<BoxCollider2D>(), out colliderOrientation);
+                if (earlyDetection != null && rayWallAcceptOrientation.Equals(colliderOrientation)) {
+                    earlyDetection = null;
+                }
+
+                if (wallTest.collider != null && wallTest.collider != lastWall && rayWallAcceptOrientation.Equals(colliderOrientation)) {
+                    if (currentWall != wallTest.collider.gameObject.GetComponent<BoxCollider2D>() && badWall != wallTest.collider.gameObject.GetComponent<BoxCollider2D>()) {
+                        Debug.Log("different wall detected: " + wallTest.collider.gameObject.GetComponent<BoxCollider2D>().name);
+
+                        // set player to exact grid position
+                        // little bit hacky, move player to closest element, but slightly in the direction it will be going.
+                        rb.position = (setup.findClosestGridElement(rb.position).transform.position + new Vector3(rayDir.x * 0.1f, rayDir.y * 0.1f, 0));
+                        Debug.Log("set player position: " + rb.position);
+
+                        //avoid early detection
+                        RaycastHit2D earlyWall = Physics2D.Raycast(rb.position, earlyDir, Mathf.Infinity, (1 << 11));
+                        earlyDetection = earlyWall.collider.gameObject.GetComponent<BoxCollider2D>();
+                        Debug.Log("early detection: " + earlyDetection.name);
+
+                        // move around corner
+                        String lastDir = direction;
+                        Debug.Log("direction: " + lastDir);
+                        if (wallSide == "bottom") {
+                            moveUp();
+                            if (lastDir == "left") {
+                                Debug.Log("set wallside left");
+                                wallSide = "left";
+                            } else {
+                                wallSide = "right";
+                            }
+                        } else if (wallSide == "top") {
+                            moveDown();
+                            if (lastDir == "left") {
+                                wallSide = "left";
+                            } else {
+                                wallSide = "right";
+                            }
+                        } else if (wallSide == "right") {
+                            moveLeft();
+                            if (lastDir == "up") {
+                                wallSide = "top";
+                            } else {
+                                wallSide = "bottom";
+                            }
+                        } else if (wallSide == "left") {
+                            moveRight();
+                            if (lastDir == "up") {
+                                wallSide = "top";
+                            } else {
+                                wallSide = "bottom";
+                            }
+                        }
+                        lastWall = currentWall;
+                        currentWall = badWall;
+                        badWall = null;
                     }
                 }
-                else if (wallSide == "top") {
-                    moveDown();
-                    if (lastDir == "left") {
-                        wallSide = "left";
-                    } else {
-                        wallSide = "right";
-                    }
-                }
-                else if (wallSide == "right") {
-                    moveLeft();
-                    if (lastDir == "up") {
-                        wallSide = "top";
-                    } else {
-                        wallSide = "bottom";
-                    }
-                }
-                else if (wallSide == "left") {
-                    moveRight();
-                    if (lastDir == "up") {
-                        wallSide = "top";
-                    } else {
-                        wallSide = "bottom";
-                    }
-                }
-                currentWall = badWall;
-                badWall = null;
             }
         }
     }
@@ -323,6 +398,11 @@ public class PlayerControls : MonoBehaviour {
 
     public void setPlayerLocation(Vector2 position) {
         rb.position = position;
+    }
+
+    public void setCurrentWall(Collider2D wall) {
+        this.currentWall = wall;
+        this.badWall = null;
     }
 
 
