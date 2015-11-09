@@ -109,18 +109,22 @@ public class GameSetup : MonoBehaviour {
     private void setUpWalls() {
         topWall.size = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(Screen.width * 2f, 0f, 0f)).x, 1f);
         topWall.offset = new Vector2(0f, mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height, 0f)).y + 0.5f);
+        areaCapture.walls.AddLast(topWall);
         areaCapture.wallOrientation.Add(topWall, "H");
 
         bottomWall.size = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(Screen.width * 2f, 0f, 0f)).x, 1f);
         bottomWall.offset = new Vector2(0f, mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).y - 0.5f);
+        areaCapture.walls.AddLast(bottomWall);
         areaCapture.wallOrientation.Add(bottomWall, "H");
 
         rightWall.size = new Vector2(1f, mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height * 2f, 0f)).y);
         rightWall.offset = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(Screen.width, 0f, 0f)).x + 0.6f, 0f);
+        areaCapture.walls.AddLast(rightWall);
         areaCapture.wallOrientation.Add(rightWall, "V");
 
         leftWall.size = new Vector2(1f, mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height * 2f, 0f)).y);
         leftWall.offset = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).x - 0.5f, 0f);
+        areaCapture.walls.AddLast(leftWall);
         areaCapture.wallOrientation.Add(leftWall, "V");
     }
 
