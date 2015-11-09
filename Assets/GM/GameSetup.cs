@@ -2,10 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine.UI;
 
 public class GameSetup : MonoBehaviour {
 
     public static bool debugMode = false;
+
+    public PauzeButton pauzeButtonScript;
+    public Button pauzeButton;
 
     public Camera mainCam;
     public Rigidbody2D player;
@@ -14,6 +18,9 @@ public class GameSetup : MonoBehaviour {
     public GameObject gameOverSprite;
     public AreaCapture areaCapture;
 
+    public GameObject panel;
+    public Text progress;
+    
     public BoxCollider2D topWall;
     public BoxCollider2D bottomWall;
     public BoxCollider2D rightWall;
@@ -23,17 +30,23 @@ public class GameSetup : MonoBehaviour {
     public ArrayList sprites = new ArrayList();
     private Vector2 numSprites;
     public float spriteSize;
+    public float menuBarSize;
 
     public int numberOfGridElements;
     public float completionPercentage;
 
+    public Level currentLevel { get; set; }
+
     // Update is called once per frame
     void Start() {
+        currentLevel = new Level(85, 10);
         // !!! fucks up all offsets - DO NOT USE !!!   => set in project settings instead
         //Screen.orientation = ScreenOrientation.LandscapeLeft;
 
         // set required capture percentage
         completionPercentage = 0.85f;
+        menuBarSize = 2 * (mainCam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0f)).x - 
+            mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().position).x);
 
         // hide level complete sprite and game over sprite
         setUpLevelComplete();
@@ -47,6 +60,8 @@ public class GameSetup : MonoBehaviour {
 
         // Create game grid
         generateGrid();
+
+        progress.text = "0/" + (int)(completionPercentage*100);
 
     }
 
@@ -65,6 +80,12 @@ public class GameSetup : MonoBehaviour {
     private void generateGrid() {
         Vector2 bottomLeft = mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f));
         Vector2 topRight = mainCam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0f));
+        Debug.Log("Rect2: " + mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().rect.size));
+        Debug.Log("Size2: " + mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().sizeDelta));
+        Debug.Log("Pos2: " + mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().position));
+        Debug.Log("TopRight: " + topRight);
+        topRight.x -= menuBarSize;
+        
         int matrixX = 0;
         for (float x = bottomLeft.x + spriteSize / 2f; x < topRight.x; x = x + spriteSize) {
             int matrixY = 0;
@@ -116,9 +137,11 @@ public class GameSetup : MonoBehaviour {
         bottomWall.offset = new Vector2(0f, mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).y - 0.5f);
         areaCapture.walls.AddLast(bottomWall);
         areaCapture.wallOrientation.Add(bottomWall, "H");
-
+        
         rightWall.size = new Vector2(1f, mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height * 2f, 0f)).y);
-        rightWall.offset = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(Screen.width, 0f, 0f)).x + 0.6f, 0f);
+        rightWall.offset = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(Screen.width, 0f, 0f)).x + 0.6f - menuBarSize, 0f);
+        /*rightWall.offset = new Vector2(rightWall.offset.x - mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().sizeDelta).x, 
+            rightWall.offset.y);*/
         areaCapture.walls.AddLast(rightWall);
         areaCapture.wallOrientation.Add(rightWall, "V");
 
@@ -128,19 +151,17 @@ public class GameSetup : MonoBehaviour {
         areaCapture.wallOrientation.Add(leftWall, "V");
     }
 
-
     public void gameOver() {
-        player.velocity = new Vector2(0, 0);
-        enemy.velocity = new Vector2(0, 0);
-        enemy.GetComponent<Rigidbody2D>().angularVelocity = 0;
+        pauzeButtonScript.PauzePlay();
+        pauzeButton.interactable = false;
         gameOverSprite.GetComponent<Renderer>().enabled = true;
     }
 
 
-    public void levelComplete() {
-        player.velocity = new Vector2(0, 0);
-        enemy.velocity = new Vector2(0, 0);
-        enemy.GetComponent<Rigidbody2D>().angularVelocity = 0;
+    public void levelComplete()
+    {
+        pauzeButtonScript.PauzePlay();
+        pauzeButton.interactable = false;
         levelCompleteSprite.GetComponent<Renderer>().enabled = true;
         
     }

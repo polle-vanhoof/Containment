@@ -71,10 +71,16 @@
     <Compile Include="Assets\Enemy\EnemyAI.cs" />
     <Compile Include="Assets\GM\GameSetup.cs" />
     <Compile Include="Assets\GM\GridElement.cs" />
+    <Compile Include="Assets\GM\Level.cs" />
     <Compile Include="Assets\GM\TouchTest.cs" />
+    <Compile Include="Assets\LevelSelectButton.cs" />
+    <Compile Include="Assets\Menu\StartButton.cs" />
+    <Compile Include="Assets\PauzeButton.cs" />
     <Compile Include="Assets\Player\AreaCapture.cs" />
     <Compile Include="Assets\Player\PlayerControls.cs" />
     <Compile Include="Assets\Player\TrailRendererLevel.cs" />
+    <Compile Include="Assets\RestartButton.cs" />
+    <Compile Include="Assets\SoundButton.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
