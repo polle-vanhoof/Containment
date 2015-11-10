@@ -30,7 +30,7 @@ public class PlayerControls : MonoBehaviour {
     public Rigidbody2D rb;
 
     void Start() {
-        speed = setup.currentLevel.playerSpeed;
+        speed = GameSetup.levelManager.getCurrentLevel().playerSpeed;
         rb = GetComponent<Rigidbody2D>();
         //Do not use moveRight here because this will mess up collisionDetection
         rb.velocity = new Vector2(speed, 0);

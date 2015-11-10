@@ -20,7 +20,7 @@ public class GameSetup : MonoBehaviour {
 
     public GameObject panel;
     public Text progress;
-    
+
     public BoxCollider2D topWall;
     public BoxCollider2D bottomWall;
     public BoxCollider2D rightWall;
@@ -33,18 +33,15 @@ public class GameSetup : MonoBehaviour {
     public float menuBarSize;
 
     public int numberOfGridElements;
-    public float completionPercentage;
 
-    public Level currentLevel { get; set; }
+    public static LevelManager levelManager = new LevelManager();
 
     // Update is called once per frame
     void Start() {
-        currentLevel = new Level(85, 10);
+        Debug.Log(levelManager.currentLevelIndex);
         // !!! fucks up all offsets - DO NOT USE !!!   => set in project settings instead
         //Screen.orientation = ScreenOrientation.LandscapeLeft;
-
-        // set required capture percentage
-        completionPercentage = 0.85f;
+        
         menuBarSize = 2 * (mainCam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0f)).x - 
             mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().position).x);
 
@@ -61,7 +58,7 @@ public class GameSetup : MonoBehaviour {
         // Create game grid
         generateGrid();
 
-        progress.text = "0/" + (int)(completionPercentage*100);
+        progress.text = "0/" + (int)(levelManager.getCurrentLevel().percentage);
 
     }
 

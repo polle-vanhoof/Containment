@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>Android:13</UnityBuildTarget>
     <UnityVersion>5.2.2f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -73,14 +75,15 @@
     <Compile Include="Assets\GM\GridElement.cs" />
     <Compile Include="Assets\GM\Level.cs" />
     <Compile Include="Assets\GM\TouchTest.cs" />
-    <Compile Include="Assets\LevelSelectButton.cs" />
-    <Compile Include="Assets\Menu\StartButton.cs" />
-    <Compile Include="Assets\PauzeButton.cs" />
+    <Compile Include="Assets\LevelManager.cs" />
+    <Compile Include="Assets\LevelSelectPopulator.cs" />
+    <Compile Include="Assets\Menu\NavigationScript.cs" />
+    <Compile Include="Assets\Menu\PauzeButton.cs" />
+    <Compile Include="Assets\Menu\RestartButton.cs" />
+    <Compile Include="Assets\Menu\SoundButton.cs" />
     <Compile Include="Assets\Player\AreaCapture.cs" />
     <Compile Include="Assets\Player\PlayerControls.cs" />
     <Compile Include="Assets\Player\TrailRendererLevel.cs" />
-    <Compile Include="Assets\RestartButton.cs" />
-    <Compile Include="Assets\SoundButton.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
