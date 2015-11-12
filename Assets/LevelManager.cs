@@ -1,18 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelManager {
 
     public List<Level> levels { get; set; }
-    public int currentLevelIndex { set; get; }
+
+    int _currentLevelIndex;
+    public int currentLevelIndex {
+        set
+        {
+            if (value < levels.Count)
+                _currentLevelIndex = value;
+        }
+        get { return _currentLevelIndex; } }
+
     public int unlockedLevelIndex { set; get; }
 
     public LevelManager()
     {
         levels = new List<Level>();
-        levels.Add(new Level(50, 10));
-        levels.Add(new Level(75, 10));
+        levels.Add(new Level(50, 5));
+        levels.Add(new Level(70, 5));
+        levels.Add(new Level(50, 2));
+        levels.Add(new Level(70, 2));
+        levels.Add(new Level(85, 10));
+        levels.Add(new Level(50, 1));
         levels.Add(new Level(80, 5));
+        levels.Add(new Level(60, 1));
         unlockedLevelIndex = levels.Count-1;
         currentLevelIndex = unlockedLevelIndex;
     }
@@ -22,4 +37,8 @@ public class LevelManager {
         return levels[currentLevelIndex];
     }
 
+    public bool isLastLevel()
+    {
+        return currentLevelIndex == levels.Count - 1;
+    }
 }

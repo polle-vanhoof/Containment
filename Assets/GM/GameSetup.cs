@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class GameSetup : MonoBehaviour {
 
@@ -10,6 +11,7 @@ public class GameSetup : MonoBehaviour {
 
     public PauzeButton pauzeButtonScript;
     public Button pauzeButton;
+    public GameObject levelCompletePanel, gameOverPanel;
 
     public Camera mainCam;
     public Rigidbody2D player;
@@ -66,12 +68,14 @@ public class GameSetup : MonoBehaviour {
         levelCompleteSprite.GetComponent<Renderer>().enabled = false;
         levelCompleteSprite.transform.position = new Vector2(0, 0);
         levelCompleteSprite.transform.localScale = new Vector2(2.5f, 2.5f);
+        levelCompletePanel.SetActive(false);
     }
 
     private void setUpGameOver() {
         gameOverSprite.GetComponent<Renderer>().enabled = false;
         gameOverSprite.transform.position = new Vector2(0, 0);
         gameOverSprite.transform.localScale = new Vector2(3.5f, 3.5f);
+        gameOverPanel.SetActive(false);
     }
 
     private void generateGrid() {
@@ -152,6 +156,8 @@ public class GameSetup : MonoBehaviour {
         pauzeButtonScript.PauzePlay();
         pauzeButton.interactable = false;
         gameOverSprite.GetComponent<Renderer>().enabled = true;
+
+        gameOverPanel.SetActive(true);
     }
 
 
@@ -160,7 +166,11 @@ public class GameSetup : MonoBehaviour {
         pauzeButtonScript.PauzePlay();
         pauzeButton.interactable = false;
         levelCompleteSprite.GetComponent<Renderer>().enabled = true;
-        
+
+        if(levelManager.isLastLevel())
+            gameOverPanel.SetActive(true);
+        else
+            levelCompletePanel.SetActive(true);
     }
 
     public GridElement findClosestGridElement(Vector2 point) {

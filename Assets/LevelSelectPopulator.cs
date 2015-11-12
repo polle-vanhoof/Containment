@@ -19,7 +19,7 @@ public class LevelSelectPopulator : MonoBehaviour {
 
             EventTrigger et = levelPick.gameObject.GetComponent<EventTrigger>();
             if (et == null)
-                et = this.gameObject.AddComponent<EventTrigger>();
+                et = levelPick.gameObject.AddComponent<EventTrigger>();
 
             EventTrigger.Entry entry = new EventTrigger.Entry();
             entry.eventID = EventTriggerType.PointerClick;

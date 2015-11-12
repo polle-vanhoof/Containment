@@ -15,6 +15,12 @@ public class NavigationScript : MonoBehaviour {
     {
         Application.LoadLevel("LevelSelect");
     }
+
+    public void startNextLevel()
+    {
+        GameSetup.levelManager.currentLevelIndex++;
+        ContinueGame();
+    }
     
     public void startLevel(int levelIndex)
     {
