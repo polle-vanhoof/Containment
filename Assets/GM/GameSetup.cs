@@ -95,7 +95,7 @@ public class GameSetup : MonoBehaviour {
             for (float y = bottomLeft.y + spriteSize / 2f; y < topRight.y; y = y + spriteSize) {
                 GameObject newSpriteObject = (GameObject)Instantiate(gridSprite, new Vector3(x, y, 0), Quaternion.identity);
                 spritesLine.Add(newSpriteObject);
-                newSpriteObject.GetComponent<Transform>().GetComponent<Renderer>().enabled = false;
+                newSpriteObject.GetComponent<Transform>().GetComponent<Renderer>().enabled = true;
                 GridElement ownScript = newSpriteObject.GetComponent<GridElement>();
                 if (matrixY > 0) {
                     GridElement leftNeighbour = ((GameObject)spritesLine[matrixY - 1]).GetComponent<GridElement>();

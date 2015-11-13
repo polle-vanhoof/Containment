@@ -17,7 +17,7 @@ public class GridElement : MonoBehaviour {
         if (captured || ContainsWall(walls)) {
             return false;
         } else {
-            GetComponent<Renderer>().enabled = true;
+            GetComponent<Renderer>().enabled = false;
             captured = true;
             return true;
         }
@@ -27,7 +27,7 @@ public class GridElement : MonoBehaviour {
         if (captured || !ContainsWall(walls)) {
             return false;
         } else {
-            GetComponent<Renderer>().enabled = true;
+            GetComponent<Renderer>().enabled = false;
             captured = true;
             return true;
         }

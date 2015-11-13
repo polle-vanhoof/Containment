@@ -8,7 +8,7 @@ public class TrailRendererLevel : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         trail = GetComponent<TrailRenderer>();
-        trail.sortingLayerName = "Default";
+        trail.sortingLayerName = "Player";
         trail.sortingOrder = -1;
         trail.time = 9999;
         stopTrail();
