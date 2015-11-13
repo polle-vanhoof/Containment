@@ -27,7 +27,7 @@ public class LevelManager {
         levels.Add(new Level(85, 10));
         levels.Add(new Level(50, 1));
         levels.Add(new Level(80, 5));
-        levels.Add(new Level(60, 1));
+        levels.Add(new Level(90, 10));
         unlockedLevelIndex = levels.Count-1;
         currentLevelIndex = unlockedLevelIndex;
     }
