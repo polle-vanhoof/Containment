@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class PauzeButton : MonoBehaviour {
 
+    public GameObject score, moves;
     public Text buttonText;
     public Button replayButton, levelSelectButton, soundButton;
 
@@ -13,6 +14,7 @@ public class PauzeButton : MonoBehaviour {
         Hide(replayButton);
         Hide(levelSelectButton);
         Hide(soundButton);
+
     }
     
     public void PauzePlay()
@@ -24,12 +26,16 @@ public class PauzeButton : MonoBehaviour {
             Hide(replayButton);
             Hide(levelSelectButton);
             Hide(soundButton);
+            score.SetActive(true);
+            moves.SetActive(true);
         } else {
             Time.timeScale = 0;
             buttonText.text = "►";
             Unhide(replayButton);
             Unhide(levelSelectButton);
             Unhide(soundButton);
+            score.SetActive(false);
+            moves.SetActive(false);
         }
     }
 
