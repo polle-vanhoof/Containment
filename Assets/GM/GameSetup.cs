@@ -22,6 +22,7 @@ public class GameSetup : MonoBehaviour {
 
     public GameObject panel;
     public Text progress;
+    public Text movesText;
 
     public BoxCollider2D topWall;
     public BoxCollider2D bottomWall;
@@ -61,7 +62,7 @@ public class GameSetup : MonoBehaviour {
         generateGrid();
 
         progress.text = "0/" + (int)(levelManager.getCurrentLevel().percentage);
-
+        movesText.text = "0/" + levelManager.getCurrentLevel().nbOfMoves;
     }
 
     private void setUpLevelComplete() {

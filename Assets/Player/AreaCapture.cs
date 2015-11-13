@@ -12,6 +12,7 @@ public class AreaCapture : MonoBehaviour {
     public GameSetup setup;
 
     private int gridElementsCaptured;
+    private int nbMoves;
     public Transform PrefabWall;
     public LinkedList<BoxCollider2D> walls = new LinkedList<BoxCollider2D>();
     public Dictionary<BoxCollider2D, String> wallOrientation = new Dictionary<BoxCollider2D, string>();
@@ -28,6 +29,7 @@ public class AreaCapture : MonoBehaviour {
         walls.AddLast(setup.bottomWall);
         walls.AddLast(setup.rightWall);
         walls.AddLast(setup.leftWall);
+        nbMoves = 0;
     }
 
     private void createCollisionBox(Vector2 point1, Vector2 point2, bool hitWall, BoxCollider2D targetWall) {
@@ -207,7 +209,16 @@ public class AreaCapture : MonoBehaviour {
         setup.progress.text = (int)(percentageCaptured*100) + "/" + (int)(GameSetup.levelManager.getCurrentLevel().percentage);
         if (percentageCaptured*100 > GameSetup.levelManager.getCurrentLevel().percentage) {
             setup.levelComplete();
+            return;
         }
+
+        nbMoves++;
+        setup.movesText.text = nbMoves + "/" + GameSetup.levelManager.getCurrentLevel().nbOfMoves;
+        if(nbMoves == GameSetup.levelManager.getCurrentLevel().nbOfMoves) {
+            setup.gameOver();
+            return;
+        }
+        
 
         if (GameSetup.debugMode) {
             Debug.Log("filling " + count + " grid elements");
