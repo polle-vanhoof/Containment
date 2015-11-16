@@ -6,15 +6,15 @@ public class Level
     public int nbOfMoves { get; set; }
     public float playerSpeed { get; set; }
     public int enemySpeed { get; set; }
-    public AudioClip music;
+    public string musicFileName { get; set; }
     
-    public Level(int percentage, int nbOfMoves, float playerSpeed, int enemySpeed, string audioFile)
+    public Level(int percentage, int nbOfMoves, float playerSpeed, int enemySpeed, string musicFileName)
     {
         this.playerSpeed = playerSpeed;
         this.enemySpeed = enemySpeed;
         this.percentage = percentage;
         this.nbOfMoves = nbOfMoves;
-        music = (AudioClip)Resources.Load(audioFile, typeof(AudioClip));
+        this.musicFileName = musicFileName;
     }
     
 }

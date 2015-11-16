@@ -10,11 +10,11 @@ public class EnemyAI : MonoBehaviour {
 
     void Start() {
         totalEnemySpeed = GameSetup.levelManager.getCurrentLevel().enemySpeed;
-        // random number between 0 and 1
-        double randomNumber = UnityEngine.Random.value;
+
+        double randomNumber = UnityEngine.Random.Range(0.3F, 0.7F); //Don't start vertical or horizontal because that's too easy!
 
         // distribute total force over x and y components 
-        int xForce = (int)Math.Round(totalEnemySpeed * randomNumber);
+        int xForce = (int)Math.Round(totalEnemySpeed * randomNumber); //TODO * random
         // needs sine/cosine math for consistent speed. 
         double angle = Math.Acos(((double)xForce) / ((double)totalEnemySpeed));
         int yForce = (int)Math.Round(1.0 * totalEnemySpeed * Math.Sin(angle));

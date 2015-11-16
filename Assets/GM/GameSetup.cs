@@ -42,7 +42,7 @@ public class GameSetup : MonoBehaviour {
     // Update is called once per frame
     void Start() {
         AudioSource audio = GetComponent<AudioSource>();
-        audio.clip = levelManager.getCurrentLevel().music;
+        audio.clip = (AudioClip)Resources.Load(levelManager.getCurrentLevel().musicFileName, typeof(AudioClip));
         audio.Play();
         audio.loop = true;
 
