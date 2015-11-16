@@ -40,7 +40,6 @@ public class PlayerControls : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D colInfo) {
         if (firstCollision) {
-            Debug.Log("first collision");
             firstCollision = false;
             return;
         }
@@ -48,8 +47,6 @@ public class PlayerControls : MonoBehaviour {
         if (colInfo.collider.tag == "Enemy") {
             return;
         }
-
-        Debug.Log("collision");
 
         // reset early detection at every wall collision
         earlyDetection = null;
@@ -64,14 +61,17 @@ public class PlayerControls : MonoBehaviour {
         }
 
         if (direction == dir && !areaCapture.colliderPartOfPath(colInfo.gameObject.GetComponent<BoxCollider2D>())) {
-            Debug.Log("setting current wall");
+            if (GameSetup.debugMode)
+                Debug.Log("setting current wall");
             currentWall = colInfo.gameObject.GetComponent<BoxCollider2D>();
         }
 
         // if the player did not collide in the direction he was going => corner problem, do nothing
         if (direction != dir) {
             badWall = colInfo.gameObject.GetComponent<BoxCollider2D>();
-            Debug.Log("badwall");
+            if (GameSetup.debugMode) {
+                Debug.Log("badwall");
+            }
             return;
         }
 
@@ -180,7 +180,8 @@ public class PlayerControls : MonoBehaviour {
         if (!onSide && direction.Equals("up")) {
             return;
         }
-        Debug.Log("moving down");
+        if (GameSetup.debugMode)
+            Debug.Log("moving down");
         rb.velocity = new Vector2(0, -speed);
         direction = "down";
         if (onSide && wallSide == "bottom") {
@@ -194,7 +195,8 @@ public class PlayerControls : MonoBehaviour {
         if (!onSide && direction.Equals("down")) {
             return;
         }
-        Debug.Log("moving up");
+        if (GameSetup.debugMode)
+            Debug.Log("moving up");
         rb.velocity = new Vector2(0, speed);
         direction = "up";
         if (onSide && wallSide == "top") {
@@ -208,7 +210,8 @@ public class PlayerControls : MonoBehaviour {
         if (!onSide && direction.Equals("right")) {
             return;
         }
-        Debug.Log("moving left");
+        if (GameSetup.debugMode)
+            Debug.Log("moving left");
         rb.velocity = new Vector2(-speed, 0);
         direction = "left";
         if (onSide && wallSide == "left") {
@@ -222,7 +225,8 @@ public class PlayerControls : MonoBehaviour {
         if (!onSide && direction.Equals("left")) {
             return;
         }
-        Debug.Log("moving right");
+        if (GameSetup.debugMode)
+            Debug.Log("moving right");
         rb.velocity = new Vector2(speed, 0);
         direction = "right";
         if (onSide && wallSide == "right") {
@@ -299,7 +303,7 @@ public class PlayerControls : MonoBehaviour {
 
         // check if you are about to go past a corner of a wall and act accordingly
         outerCornerFollow();
-        
+
     }
 
     private void outerCornerFollow() {
@@ -348,25 +352,24 @@ public class PlayerControls : MonoBehaviour {
 
                 if (wallTest.collider != null && wallTest.collider != lastWall && rayWallAcceptOrientation.Equals(colliderOrientation)) {
                     if (currentWall != wallTest.collider.gameObject.GetComponent<BoxCollider2D>() && badWall != wallTest.collider.gameObject.GetComponent<BoxCollider2D>()) {
-                        Debug.Log("different wall detected: " + wallTest.collider.gameObject.GetComponent<BoxCollider2D>().name);
+                        if(GameSetup.debugMode) Debug.Log("different wall detected: " + wallTest.collider.gameObject.GetComponent<BoxCollider2D>().name);
 
                         // set player to exact grid position
                         // little bit hacky, move player to closest element, but slightly in the direction it will be going.
                         rb.position = (setup.findClosestGridElement(rb.position).transform.position + new Vector3(rayDir.x * 0.1f, rayDir.y * 0.1f, 0));
-                        Debug.Log("set player position: " + rb.position);
+                        if (GameSetup.debugMode) Debug.Log("set player position: " + rb.position);
 
                         //avoid early detection
                         RaycastHit2D earlyWall = Physics2D.Raycast(rb.position, earlyDir, Mathf.Infinity, (1 << 11));
                         earlyDetection = earlyWall.collider.gameObject.GetComponent<BoxCollider2D>();
-                        Debug.Log("early detection: " + earlyDetection.name);
+                        if (GameSetup.debugMode) Debug.Log("early detection: " + earlyDetection.name);
 
                         // move around corner
                         String lastDir = direction;
-                        Debug.Log("direction: " + lastDir);
+                        if (GameSetup.debugMode) Debug.Log("direction: " + lastDir);
                         if (wallSide == "bottom") {
                             moveUp();
                             if (lastDir == "left") {
-                                Debug.Log("set wallside left");
                                 wallSide = "left";
                             } else {
                                 wallSide = "right";

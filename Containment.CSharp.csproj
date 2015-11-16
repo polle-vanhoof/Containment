@@ -68,6 +68,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Backgrounds\BGManager.cs" />
     <Compile Include="Assets\Enemy\EnemyAI.cs" />
     <Compile Include="Assets\GM\GameSetup.cs" />
     <Compile Include="Assets\GM\GridElement.cs" />

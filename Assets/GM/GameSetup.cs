@@ -19,6 +19,7 @@ public class GameSetup : MonoBehaviour {
     public GameObject levelCompleteSprite;
     public GameObject gameOverSprite;
     public AreaCapture areaCapture;
+    public BGManager bgManager;
 
     public GameObject panel;
     public Text progress;
@@ -41,7 +42,7 @@ public class GameSetup : MonoBehaviour {
 
     // Update is called once per frame
     void Start() {
-        Debug.Log(levelManager.currentLevelIndex);
+        if (GameSetup.debugMode) Debug.Log(levelManager.currentLevelIndex);
         // !!! fucks up all offsets - DO NOT USE !!!   => set in project settings instead
         //Screen.orientation = ScreenOrientation.LandscapeLeft;
         
@@ -60,6 +61,9 @@ public class GameSetup : MonoBehaviour {
 
         // Create game grid
         generateGrid();
+
+        // Set the level background
+        bgManager.setBackground(1/*levelManager.currentLevelIndex*/);
 
         progress.text = "0/" + (int)(levelManager.getCurrentLevel().percentage);
         movesText.text = "0/" + levelManager.getCurrentLevel().nbOfMoves;
@@ -82,10 +86,12 @@ public class GameSetup : MonoBehaviour {
     private void generateGrid() {
         Vector2 bottomLeft = mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f));
         Vector2 topRight = mainCam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0f));
-        Debug.Log("Rect2: " + mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().rect.size));
-        Debug.Log("Size2: " + mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().sizeDelta));
-        Debug.Log("Pos2: " + mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().position));
-        Debug.Log("TopRight: " + topRight);
+        if (GameSetup.debugMode) {
+            Debug.Log("Rect2: " + mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().rect.size));
+            Debug.Log("Size2: " + mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().sizeDelta));
+            Debug.Log("Pos2: " + mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().position));
+            Debug.Log("TopRight: " + topRight);
+        }
         topRight.x -= menuBarSize;
         
         int matrixX = 0;
@@ -333,5 +339,9 @@ public class GameSetup : MonoBehaviour {
 
             GUI.Label(new Rect(390, 0, 120, 100), messageLeft);
         }
+    }
+
+    public Vector2 getGridDimensions() {
+        return numSprites;
     }
 }
