@@ -41,6 +41,11 @@ public class GameSetup : MonoBehaviour {
 
     // Update is called once per frame
     void Start() {
+        AudioSource audio = GetComponent<AudioSource>();
+        audio.clip = levelManager.getCurrentLevel().music;
+        audio.Play();
+        audio.loop = true;
+
         Debug.Log(levelManager.currentLevelIndex);
         // !!! fucks up all offsets - DO NOT USE !!!   => set in project settings instead
         //Screen.orientation = ScreenOrientation.LandscapeLeft;
