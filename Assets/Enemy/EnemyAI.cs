@@ -9,9 +9,9 @@ public class EnemyAI : MonoBehaviour {
     public AreaCapture areaCapture;
 
     void Start() {
-        //TODO totalEnemySpeed = setup.currentLevel.enemySpeed;
-        // random number between 0 and 1
-        double randomNumber = UnityEngine.Random.value;
+        totalEnemySpeed = GameSetup.levelManager.getCurrentLevel().enemySpeed;
+
+        double randomNumber = UnityEngine.Random.Range(0.4F, 0.6F); //Don't start vertical or horizontal because that's too easy!
 
         // distribute total force over x and y components 
         int xForce = (int)Math.Round(totalEnemySpeed * randomNumber);
