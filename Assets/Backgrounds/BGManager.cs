@@ -10,7 +10,6 @@ public class BGManager : MonoBehaviour {
     public void setBackground(int backgroundIndex) {
         SpriteRenderer backgroundSprite = this.GetComponent<SpriteRenderer>();
         string backgroundName = "BG" + backgroundIndex;
-        Debug.Log(backgroundSprite);
         backgroundSprite.sprite = Resources.Load(backgroundName, typeof(Sprite)) as Sprite;
         transform.position = new Vector3(-gm.menuBarSize/2f,0,0);
         setSpriteScale(backgroundSprite.sprite);
@@ -35,10 +34,6 @@ public class BGManager : MonoBehaviour {
         float scaleY = gridHeight / height;
 
         backgroundSprite.transform.localScale = new Vector2(scaleX, scaleY);
-
-        Debug.Log("width: " + width + " height: " + height);
-        Debug.Log("grid  -- width: " + gridWidth + " height: " + gridHeight);
-        Debug.Log(scaleX + " " + scaleY);
     }
 
 }

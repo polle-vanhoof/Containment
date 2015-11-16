@@ -68,7 +68,7 @@ public class GameSetup : MonoBehaviour {
         generateGrid();
 
         // Set the level background
-        bgManager.setBackground(1/*levelManager.currentLevelIndex*/);
+        bgManager.setBackground(levelManager.currentLevelIndex+1);
 
         progress.text = "0/" + (int)(levelManager.getCurrentLevel().percentage);
         movesText.text = "0/" + levelManager.getCurrentLevel().nbOfMoves;
