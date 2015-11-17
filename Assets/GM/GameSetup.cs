@@ -182,6 +182,8 @@ public class GameSetup : MonoBehaviour {
         pauzeButton.interactable = false;
         levelCompleteSprite.GetComponent<Renderer>().enabled = true;
         revealBackground();
+        player.GetComponent<SpriteRenderer>().enabled = false;
+        enemy.GetComponent<SpriteRenderer>().enabled = false;
 
         if (levelManager.isLastLevel())
             gameOverPanel.SetActive(true);
