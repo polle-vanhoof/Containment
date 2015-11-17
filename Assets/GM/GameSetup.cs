@@ -50,8 +50,8 @@ public class GameSetup : MonoBehaviour {
         if (GameSetup.debugMode) Debug.Log(levelManager.currentLevelIndex);
         // !!! fucks up all offsets - DO NOT USE !!!   => set in project settings instead
         //Screen.orientation = ScreenOrientation.LandscapeLeft;
-        
-        menuBarSize = 2 * (mainCam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0f)).x - 
+
+        menuBarSize = 2 * (mainCam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0f)).x -
             mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().position).x);
 
         // hide level complete sprite and game over sprite
@@ -68,7 +68,7 @@ public class GameSetup : MonoBehaviour {
         generateGrid();
 
         // Set the level background
-        bgManager.setBackground(levelManager.currentLevelIndex+1);
+        bgManager.setBackground(levelManager.currentLevelIndex + 1);
 
         progress.text = "0/" + (int)(levelManager.getCurrentLevel().percentage);
         movesText.text = "0/" + levelManager.getCurrentLevel().nbOfMoves;
@@ -78,14 +78,18 @@ public class GameSetup : MonoBehaviour {
         levelCompleteSprite.GetComponent<Renderer>().enabled = false;
         levelCompleteSprite.transform.position = new Vector2(0, 0);
         levelCompleteSprite.transform.localScale = new Vector2(2.5f, 2.5f);
+
         levelCompletePanel.SetActive(false);
+        levelCompletePanel.transform.position = new Vector3(Screen.width / 2f, Screen.height - 60f);
     }
 
     private void setUpGameOver() {
         gameOverSprite.GetComponent<Renderer>().enabled = false;
         gameOverSprite.transform.position = new Vector2(0, 0);
         gameOverSprite.transform.localScale = new Vector2(3.5f, 3.5f);
+
         gameOverPanel.SetActive(false);
+        gameOverPanel.transform.position = new Vector3(Screen.width/2f, Screen.height-60f);
     }
 
     private void generateGrid() {
@@ -98,7 +102,7 @@ public class GameSetup : MonoBehaviour {
             Debug.Log("TopRight: " + topRight);
         }
         topRight.x -= menuBarSize;
-        
+
         int matrixX = 0;
         for (float x = bottomLeft.x + spriteSize / 2f; x < topRight.x; x = x + spriteSize) {
             int matrixY = 0;
@@ -150,7 +154,7 @@ public class GameSetup : MonoBehaviour {
         bottomWall.offset = new Vector2(0f, mainCam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).y - 0.5f);
         areaCapture.walls.AddLast(bottomWall);
         areaCapture.wallOrientation.Add(bottomWall, "H");
-        
+
         rightWall.size = new Vector2(1f, mainCam.ScreenToWorldPoint(new Vector3(0f, Screen.height * 2f, 0f)).y);
         rightWall.offset = new Vector2(mainCam.ScreenToWorldPoint(new Vector3(Screen.width, 0f, 0f)).x + 0.6f - menuBarSize, 0f);
         /*rightWall.offset = new Vector2(rightWall.offset.x - mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().sizeDelta).x, 
@@ -173,16 +177,26 @@ public class GameSetup : MonoBehaviour {
     }
 
 
-    public void levelComplete()
-    {
+    public void levelComplete() {
         pauzeButtonScript.PauzePlay();
         pauzeButton.interactable = false;
         levelCompleteSprite.GetComponent<Renderer>().enabled = true;
+        revealBackground();
 
-        if(levelManager.isLastLevel())
+        if (levelManager.isLastLevel())
             gameOverPanel.SetActive(true);
         else
             levelCompletePanel.SetActive(true);
+    }
+
+    private void revealBackground() {
+        for (int i = 0; i < sprites.Count; i++) {
+            ArrayList spriteLine = (ArrayList)sprites[i];
+            for (int j = 0; j < spriteLine.Count; j++) {
+                GridElement element = ((GameObject)spriteLine[j]).GetComponent<GridElement>();
+                element.revealBackground();
+            }
+        }
     }
 
     public GridElement findClosestGridElement(Vector2 point) {
@@ -199,13 +213,13 @@ public class GameSetup : MonoBehaviour {
         if (xEstimate >= sprites.Count) {
             xEstimate = sprites.Count - 1;
         }
-        if(xEstimate < 0) {
+        if (xEstimate < 0) {
             xEstimate = 0;
         }
         if (yEstimate >= ((ArrayList)sprites[0]).Count) {
             yEstimate = ((ArrayList)sprites[0]).Count - 1;
         }
-        if(yEstimate < 0) {
+        if (yEstimate < 0) {
             yEstimate = 0;
         }
 
@@ -278,25 +292,25 @@ public class GameSetup : MonoBehaviour {
         return estimate;
 
         // inefficient way
-      /*GridElement closest = ((GameObject)((ArrayList)sprites[0])[0]).GetComponent<GridElement>();
-        for (int i = 0; i < sprites.Count; i++) {
-            ArrayList spriteLine = (ArrayList)sprites[i];
-            for (int j = 0; j < spriteLine.Count; j++) {
-                GridElement element = ((GameObject)spriteLine[j]).GetComponent<GridElement>();
-                if (Vector2.Distance(element.transform.position, point) < Vector2.Distance(closest.transform.position, point)) {
-                    closest = element;
-                }
-            }
-        }
-        if (closest != estimate) {
-            Debug.LogWarning("wrong element selected");
-            Debug.Log("CLOSEST GRID ELEMENT ------ point position: " + point + " --- element position: " + estimate.transform.position);
-            Debug.Log("correct x: " + point.x + " correct y: " + point.y);
-            Debug.Log("estimate x: " + estimate.transform.position.x + " estimate y: " + estimate.transform.position.y);
-            Debug.Log("correct distance: " + Vector2.Distance(closest.transform.position, point));
-            Debug.Log("estimate distance: " + Vector2.Distance(estimate.transform.position, point));
-        }
-        return closest;*/
+        /*GridElement closest = ((GameObject)((ArrayList)sprites[0])[0]).GetComponent<GridElement>();
+          for (int i = 0; i < sprites.Count; i++) {
+              ArrayList spriteLine = (ArrayList)sprites[i];
+              for (int j = 0; j < spriteLine.Count; j++) {
+                  GridElement element = ((GameObject)spriteLine[j]).GetComponent<GridElement>();
+                  if (Vector2.Distance(element.transform.position, point) < Vector2.Distance(closest.transform.position, point)) {
+                      closest = element;
+                  }
+              }
+          }
+          if (closest != estimate) {
+              Debug.LogWarning("wrong element selected");
+              Debug.Log("CLOSEST GRID ELEMENT ------ point position: " + point + " --- element position: " + estimate.transform.position);
+              Debug.Log("correct x: " + point.x + " correct y: " + point.y);
+              Debug.Log("estimate x: " + estimate.transform.position.x + " estimate y: " + estimate.transform.position.y);
+              Debug.Log("correct distance: " + Vector2.Distance(closest.transform.position, point));
+              Debug.Log("estimate distance: " + Vector2.Distance(estimate.transform.position, point));
+          }
+          return closest;*/
     }
 
     public void resetGridForEnemySearch() {

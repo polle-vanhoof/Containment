@@ -17,17 +17,21 @@ public class GridElement : MonoBehaviour {
         if (captured || ContainsWall(walls)) {
             return false;
         } else {
-            GetComponent<Renderer>().enabled = false;
+            revealBackground();
             captured = true;
             return true;
         }
+    }
+
+    public void revealBackground() {
+        GetComponent<Renderer>().enabled = false;
     }
 
     public bool captureWall(LinkedList<BoxCollider2D> walls) {
         if (captured || !ContainsWall(walls)) {
             return false;
         } else {
-            GetComponent<Renderer>().enabled = false;
+            revealBackground();
             captured = true;
             return true;
         }
