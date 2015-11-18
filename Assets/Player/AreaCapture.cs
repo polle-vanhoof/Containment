@@ -74,6 +74,7 @@ public class AreaCapture : MonoBehaviour {
             Debug.Log("Collision Box between (" + point1.x + "," + point1.y + ") and (" + point2.x + "," + point2.y + ")");
         }
         Vector2 floodFillStartPoint;
+        float backOffset = setup.spriteSize + 0.05f;
         if (point1.x == point2.x) {
             Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
             newWall.name = newWall.name + " " + (walls.Count+1);
@@ -88,7 +89,6 @@ public class AreaCapture : MonoBehaviour {
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
             wallOrientation.Add(newWall.GetComponent<BoxCollider2D>(), "V");
             Pathwalls.AddLast(newWall.GetComponent<BoxCollider2D>());
-            float backOffset = setup.spriteSize + 0.05f;
             if (controls.direction.Equals("up")) {
                 backOffset = -backOffset;
             }
@@ -129,7 +129,6 @@ public class AreaCapture : MonoBehaviour {
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
             wallOrientation.Add(newWall.GetComponent<BoxCollider2D>(), "H");
             Pathwalls.AddLast(newWall.GetComponent<BoxCollider2D>());
-            float backOffset = setup.spriteSize + 0.05f;
             if (controls.direction.Equals("right")) {
                 backOffset = -backOffset;
             }
@@ -165,6 +164,11 @@ public class AreaCapture : MonoBehaviour {
     }
 
     private void floodFill(GridElement startElement) {
+        Debug.Log("floodfilling");
+        Debug.DrawRay(startElement.transform.position, new Vector2(0,1), Color.green);
+        Debug.DrawRay(startElement.transform.position, new Vector2(1, 0), Color.green);
+        Debug.DrawRay(startElement.transform.position, new Vector2(0, -1), Color.green);
+        Debug.DrawRay(startElement.transform.position, new Vector2(-1, 0), Color.green);
         GridElement wallElement = null;
         Queue<GridElement> queue = new Queue<GridElement>();
         queue.Enqueue(startElement);
