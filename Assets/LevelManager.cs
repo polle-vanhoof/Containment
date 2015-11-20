@@ -20,11 +20,11 @@ public class LevelManager {
     public LevelManager()
     {
         levels = new List<Level>();
-        levels.Add(new Level(75, 10, 5, 40, "Sounds/level1"));
+        levels.Add(new Level(65, 20, 7, 25, "Sounds/level1"));
         //http://freesound.org/people/mickleness/sounds/316975/
-        levels.Add(new Level(85, 20, 7, 25, "Sounds/level2"));
+        levels.Add(new Level(65, 20, 7, 35, "Sounds/level2"));
         //http://freesound.org/people/mickleness/sounds/244004/
-        levels.Add(new Level(60, 15, 3, 30, "Sounds/level3"));
+        levels.Add(new Level(65, 20, 4, 25, "Sounds/level3"));
         unlockedLevelIndex = levels.Count-1;
         currentLevelIndex = unlockedLevelIndex;
     }
