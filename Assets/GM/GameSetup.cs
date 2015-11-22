@@ -82,7 +82,7 @@ public class GameSetup : MonoBehaviour {
         levelCompletePanel.SetActive(false);
 
         RectTransform rect = levelCompletePanel.GetComponent<RectTransform>();
-        rect.anchoredPosition = new Vector3(0, (Screen.height/2) * 0.6f);
+        //rect.anchoredPosition = new Vector3(0, -Screen.height*0.2f);
     }
 
     private void setUpGameOver() {
@@ -93,7 +93,7 @@ public class GameSetup : MonoBehaviour {
         gameOverPanel.SetActive(false);
 
         RectTransform rect = gameOverPanel.GetComponent<RectTransform>();
-        rect.anchoredPosition = new Vector3(0, (Screen.height/2) *0.6f);
+        //rect.anchoredPosition = new Vector3(0, -Screen.height*0.2f);
     }
 
     private void generateGrid() {
