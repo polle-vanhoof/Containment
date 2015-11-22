@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class SoundButton : MonoBehaviour {
 
@@ -16,6 +17,10 @@ public class SoundButton : MonoBehaviour {
         AudioListener.volume = 0;
         AudioListener.pause = true;
         PlayerPrefs.Save();
+
+        // change button image
+        Image image = GetComponent<Image>();
+        image.sprite = Resources.Load("unmute", typeof(Sprite)) as Sprite;
     }
 
     public void Unmute()
@@ -24,6 +29,10 @@ public class SoundButton : MonoBehaviour {
         AudioListener.volume = 1;
         AudioListener.pause = false;
         PlayerPrefs.Save();
+
+        // change button image
+        Image image = GetComponent<Image>();
+        image.sprite = Resources.Load("mute", typeof(Sprite)) as Sprite;
     }
 
 	public void MuteUnmute()

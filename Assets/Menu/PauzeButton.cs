@@ -43,13 +43,19 @@ public class PauzeButton : MonoBehaviour {
     {
         but.enabled = false;
         but.GetComponentInChildren<CanvasRenderer>().SetAlpha(0);
-        but.GetComponentInChildren<Text>().color = Color.clear;
+        Text text = but.GetComponentInChildren<Text>();
+        if(text != null) {
+            text.color = Color.clear;
+        }
     }
 
    public void Unhide(Button but) {
         but.enabled = true;
         but.GetComponentInChildren<CanvasRenderer>().SetAlpha(1);
-        but.GetComponentInChildren<Text>().color = Color.black;
+        Text text = but.GetComponentInChildren<Text>();
+        if(text != null) {
+            text.color = Color.black;
+        }
     }
 
 }

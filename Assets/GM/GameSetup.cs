@@ -52,7 +52,7 @@ public class GameSetup : MonoBehaviour {
         //Screen.orientation = ScreenOrientation.LandscapeLeft;
 
         menuBarSize = 2 * (mainCam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0f)).x -
-            mainCam.ScreenToWorldPoint(panel.GetComponent<RectTransform>().position).x);
+            (panel.GetComponent<RectTransform>().position).x);
 
         // hide level complete sprite and game over sprite
         setUpLevelComplete();
@@ -80,7 +80,9 @@ public class GameSetup : MonoBehaviour {
         levelCompleteSprite.transform.localScale = new Vector2(2.5f, 2.5f);
 
         levelCompletePanel.SetActive(false);
-        levelCompletePanel.transform.position = new Vector3(Screen.width / 2f, Screen.height - 60f);
+
+        RectTransform rect = levelCompletePanel.GetComponent<RectTransform>();
+        rect.anchoredPosition = new Vector3(0, (Screen.height/2) * 0.6f);
     }
 
     private void setUpGameOver() {
@@ -89,7 +91,9 @@ public class GameSetup : MonoBehaviour {
         gameOverSprite.transform.localScale = new Vector2(3.5f, 3.5f);
 
         gameOverPanel.SetActive(false);
-        gameOverPanel.transform.position = new Vector3(Screen.width/2f, Screen.height-60f);
+
+        RectTransform rect = gameOverPanel.GetComponent<RectTransform>();
+        rect.anchoredPosition = new Vector3(0, (Screen.height/2) *0.6f);
     }
 
     private void generateGrid() {
