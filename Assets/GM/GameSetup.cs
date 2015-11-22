@@ -173,7 +173,7 @@ public class GameSetup : MonoBehaviour {
     }
 
     public void gameOver() {
-        pauzeButtonScript.PauzePlay();
+        pauzeButtonScript.pauseNoMenu();
         pauzeButton.interactable = false;
         gameOverSprite.GetComponent<Renderer>().enabled = true;
 
@@ -182,7 +182,7 @@ public class GameSetup : MonoBehaviour {
 
 
     public void levelComplete() {
-        pauzeButtonScript.PauzePlay();
+        pauzeButtonScript.pauseNoMenu();
         pauzeButton.interactable = false;
         levelCompleteSprite.GetComponent<Renderer>().enabled = true;
         revealBackground();

@@ -209,6 +209,12 @@ public class AreaCapture : MonoBehaviour {
         additionalFillPoints.Clear();
         gridElementsCaptured += count;
 
+
+        // Set number of moves before checking level complete, don't check if number of moves exceeded yet
+        nbMoves++;
+        setup.movesText.text = nbMoves + "/" + GameSetup.levelManager.getCurrentLevel().nbOfMoves;
+
+        // check for level complete
         float percentageCaptured = (gridElementsCaptured * 1.0f) / (setup.numberOfGridElements*1.0f);
         setup.progress.text = (int)(percentageCaptured*100) + "/" + (int)(GameSetup.levelManager.getCurrentLevel().percentage);
         if (percentageCaptured*100 > GameSetup.levelManager.getCurrentLevel().percentage) {
@@ -216,8 +222,7 @@ public class AreaCapture : MonoBehaviour {
             return;
         }
 
-        nbMoves++;
-        setup.movesText.text = nbMoves + "/" + GameSetup.levelManager.getCurrentLevel().nbOfMoves;
+        // check for maximum number of moves used
         if(nbMoves == GameSetup.levelManager.getCurrentLevel().nbOfMoves) {
             setup.gameOver();
             return;
