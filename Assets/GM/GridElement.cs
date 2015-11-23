@@ -74,7 +74,7 @@ public class GridElement : MonoBehaviour {
 
     public bool ContainsEnemy(EnemyAI enemy) {
         bool containsEnemy = false;
-        BoxCollider2D box = enemy.gameObject.GetComponent<BoxCollider2D>();
+        PolygonCollider2D box = enemy.gameObject.GetComponent<PolygonCollider2D>();
         if (gameObject.GetComponent<Renderer>().bounds.Intersects(box.bounds)) {
             containsEnemy = true;
         }

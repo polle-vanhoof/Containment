@@ -24,6 +24,11 @@ public class EnemyAI : MonoBehaviour {
             xForce = -xForce;
         if (UnityEngine.Random.value > 0.5)
             yForce = -yForce;
+
+        // not to the top right
+        if(xForce > 0 && yForce > 0) {
+            yForce = -yForce;
+        }
         // apply force
         GetComponent<Rigidbody2D>().AddForce(new Vector2(xForce, yForce));
         // set a random rotation speed between -10 and +10
