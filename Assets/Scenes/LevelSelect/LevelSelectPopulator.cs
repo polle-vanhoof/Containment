@@ -16,6 +16,7 @@ public class LevelSelectPopulator : MonoBehaviour {
         {
             GameObject levelPick = (GameObject)Instantiate(levelPickObject, new Vector3(), new Quaternion());
             levelPick.transform.SetParent(levelCanvas.transform);
+            levelPick.GetComponent<TextMesh>().text = (i + 1)+"";
 
             EventTrigger et = levelPick.gameObject.GetComponent<EventTrigger>();
             if (et == null)
