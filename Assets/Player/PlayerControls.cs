@@ -19,6 +19,8 @@ public class PlayerControls : MonoBehaviour {
 
     private String lastTouch = "";
 
+    private bool cornerFollowMode = false;
+
     // NOT RELIABLE, DO NOT USE FOR ANYTHING OTHER THAN CORNER MOVEMENT EDGE CASES
     private Collider2D currentWall;
     private Collider2D badWall;
@@ -180,7 +182,7 @@ public class PlayerControls : MonoBehaviour {
         if (!onSide && direction.Equals("up")) {
             return;
         }
-        if (onSide && wallSide.Equals("top")) {
+        if (!cornerFollowMode && onSide && wallSide.Equals("top")) {
             return;
         }
         if (GameSetup.debugMode)
@@ -198,7 +200,7 @@ public class PlayerControls : MonoBehaviour {
         if (!onSide && direction.Equals("down")) {
             return;
         }
-        if (onSide && wallSide.Equals("bottom")) {
+        if (!cornerFollowMode && onSide && wallSide.Equals("bottom")) {
             return;
         }
         if (GameSetup.debugMode)
@@ -216,7 +218,7 @@ public class PlayerControls : MonoBehaviour {
         if (!onSide && direction.Equals("right")) {
             return;
         }
-        if (onSide && wallSide.Equals("right")) {
+        if (!cornerFollowMode && onSide && wallSide.Equals("right")) {
             return;
         }
         if (GameSetup.debugMode)
@@ -234,7 +236,7 @@ public class PlayerControls : MonoBehaviour {
         if (!onSide && direction.Equals("left")) {
             return;
         }
-        if(onSide && wallSide.Equals("left")) {
+        if(!cornerFollowMode && onSide && wallSide.Equals("left")) {
             return;
         }
         if (GameSetup.debugMode)
@@ -319,6 +321,7 @@ public class PlayerControls : MonoBehaviour {
     }
 
     private void outerCornerFollow() {
+        cornerFollowMode = true;
         if (onSide) {
             Vector2 rayDir = new Vector2(0, 1); // raycast towards wall you are following
             Vector2 rayOffset = new Vector2(0, 0);
@@ -415,6 +418,7 @@ public class PlayerControls : MonoBehaviour {
                 }
             }
         }
+        cornerFollowMode = false;
     }
 
 
