@@ -76,8 +76,8 @@ public class GameSetup : MonoBehaviour {
 
     private void setUpLevelComplete() {
         levelCompleteSprite.GetComponent<Renderer>().enabled = false;
-        levelCompleteSprite.transform.position = new Vector2(0, 0);
-        levelCompleteSprite.transform.localScale = new Vector2(2.5f, 2.5f);
+        //levelCompleteSprite.transform.position = new Vector2(0, 0);
+        //levelCompleteSprite.transform.localScale = new Vector2(Screen.width / 4f, Screen.width / 4f);
 
         levelCompletePanel.SetActive(false);
 
@@ -87,8 +87,8 @@ public class GameSetup : MonoBehaviour {
 
     private void setUpGameOver() {
         gameOverSprite.GetComponent<Renderer>().enabled = false;
-        gameOverSprite.transform.position = new Vector2(0, 0);
-        gameOverSprite.transform.localScale = new Vector2(3.5f, 3.5f);
+        //gameOverSprite.transform.position = new Vector2(0, 0);
+        //gameOverSprite.transform.localScale = mainCam.ScreenToWorldPoint( new Vector2(Screen.width/8f, Screen.height/8f));
 
         gameOverPanel.SetActive(false);
 

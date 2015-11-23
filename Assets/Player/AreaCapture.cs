@@ -20,8 +20,10 @@ public class AreaCapture : MonoBehaviour {
     public LinkedList<GridElement> additionalFillPoints = new LinkedList<GridElement>();
 
     void OnGUI() {
-        GUI.skin.label.fontSize = 30;
-        GUI.Label(new Rect(0, 0, 120, 100), "" + walls.Count);
+        if (GameSetup.debugMode) {
+            GUI.skin.label.fontSize = 30;
+            GUI.Label(new Rect(0, 0, 120, 100), "" + walls.Count);
+        }
     }
 
     void start() {
@@ -77,7 +79,7 @@ public class AreaCapture : MonoBehaviour {
         float backOffset = setup.spriteSize + 0.05f;
         if (point1.x == point2.x) {
             Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
-            newWall.name = newWall.name + " " + (walls.Count+1);
+            newWall.name = newWall.name + " " + (walls.Count + 1);
             newWall.GetComponent<BoxCollider2D>().size = new Vector2(setup.spriteSize, Math.Abs(point1.y - point2.y) + setup.spriteSize);
             float yOffset;
             if (point1.y < point2.y) {
@@ -117,7 +119,7 @@ public class AreaCapture : MonoBehaviour {
             }
         } else {
             Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
-            newWall.name = newWall.name + " " + (walls.Count+1);
+            newWall.name = newWall.name + " " + (walls.Count + 1);
             newWall.GetComponent<BoxCollider2D>().size = new Vector2(Math.Abs(point1.x - point2.x) + setup.spriteSize, setup.spriteSize);
             float xOffset;
             if (point1.x < point2.x) {
@@ -165,7 +167,7 @@ public class AreaCapture : MonoBehaviour {
 
     private void floodFill(GridElement startElement) {
         Debug.Log("floodfilling");
-        Debug.DrawRay(startElement.transform.position, new Vector2(0,1), Color.green);
+        Debug.DrawRay(startElement.transform.position, new Vector2(0, 1), Color.green);
         Debug.DrawRay(startElement.transform.position, new Vector2(1, 0), Color.green);
         Debug.DrawRay(startElement.transform.position, new Vector2(0, -1), Color.green);
         Debug.DrawRay(startElement.transform.position, new Vector2(-1, 0), Color.green);
@@ -215,22 +217,22 @@ public class AreaCapture : MonoBehaviour {
         setup.movesText.text = nbMoves + "/" + GameSetup.levelManager.getCurrentLevel().nbOfMoves;
 
         // check for level complete
-        float percentageCaptured = (gridElementsCaptured * 1.0f) / (setup.numberOfGridElements*1.0f);
-        if(percentageCaptured > 1) {
+        float percentageCaptured = (gridElementsCaptured * 1.0f) / (setup.numberOfGridElements * 1.0f);
+        if (percentageCaptured > 1) {
             percentageCaptured = 1;
         }
-        setup.progress.text = (int)(percentageCaptured*100) + "/" + (int)(GameSetup.levelManager.getCurrentLevel().percentage);
-        if (percentageCaptured*100 > GameSetup.levelManager.getCurrentLevel().percentage) {
+        setup.progress.text = (int)(percentageCaptured * 100) + "/" + (int)(GameSetup.levelManager.getCurrentLevel().percentage);
+        if (percentageCaptured * 100 > GameSetup.levelManager.getCurrentLevel().percentage) {
             setup.levelComplete();
             return;
         }
 
         // check for maximum number of moves used
-        if(nbMoves == GameSetup.levelManager.getCurrentLevel().nbOfMoves) {
+        if (nbMoves == GameSetup.levelManager.getCurrentLevel().nbOfMoves) {
             setup.gameOver();
             return;
         }
-        
+
 
         if (GameSetup.debugMode) {
             Debug.Log("filling " + count + " grid elements");
@@ -258,7 +260,7 @@ public class AreaCapture : MonoBehaviour {
     }
 
     public bool colliderPartOfPath(BoxCollider2D collider) {
-        if(collider == null) {
+        if (collider == null) {
             return false;
         }
         if (Pathwalls.Contains(collider)) {
