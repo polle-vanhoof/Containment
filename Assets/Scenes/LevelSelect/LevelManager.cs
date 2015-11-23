@@ -35,12 +35,12 @@ public class LevelManager {
         levels.Add(new Level(70, 10, 4, 25, "Sounds/music3"));
 
         // http://ericskiff.com/music/
-        levels.Add(new Level(70, 10, 6, 30, "Sounds/music4"));
-        levels.Add(new Level(70, 10, 5, 35, "Sounds/music4"));
-        levels.Add(new Level(70, 10, 4, 40, "Sounds/music4"));
+        levels.Add(new Level(70, 10, 7, 30, "Sounds/music4"));
+        levels.Add(new Level(70, 10, 7, 35, "Sounds/music4"));
+        levels.Add(new Level(70, 10, 7, 40, "Sounds/music4"));
 
         // https://soundcloud.com/ddddan/ddddan-bassss
-        levels.Add(new Level(85, 5, 7, 30, "Sounds/music4"));
+        levels.Add(new Level(85, 5, 7, 35, "Sounds/music5"));
         unlockedLevelIndex = levels.Count-1;
         currentLevelIndex = unlockedLevelIndex;
     }
