@@ -180,6 +180,9 @@ public class PlayerControls : MonoBehaviour {
         if (!onSide && direction.Equals("up")) {
             return;
         }
+        if (onSide && wallSide.Equals("top")) {
+            return;
+        }
         if (GameSetup.debugMode)
             Debug.Log("moving down");
         rb.velocity = new Vector2(0, -speed);
@@ -193,6 +196,9 @@ public class PlayerControls : MonoBehaviour {
 
     public void moveUp() {
         if (!onSide && direction.Equals("down")) {
+            return;
+        }
+        if (onSide && wallSide.Equals("bottom")) {
             return;
         }
         if (GameSetup.debugMode)
@@ -210,6 +216,9 @@ public class PlayerControls : MonoBehaviour {
         if (!onSide && direction.Equals("right")) {
             return;
         }
+        if (onSide && wallSide.Equals("right")) {
+            return;
+        }
         if (GameSetup.debugMode)
             Debug.Log("moving left");
         rb.velocity = new Vector2(-speed, 0);
@@ -223,6 +232,9 @@ public class PlayerControls : MonoBehaviour {
 
     public void moveRight() {
         if (!onSide && direction.Equals("left")) {
+            return;
+        }
+        if(onSide && wallSide.Equals("left")) {
             return;
         }
         if (GameSetup.debugMode)

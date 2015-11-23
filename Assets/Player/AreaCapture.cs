@@ -216,6 +216,9 @@ public class AreaCapture : MonoBehaviour {
 
         // check for level complete
         float percentageCaptured = (gridElementsCaptured * 1.0f) / (setup.numberOfGridElements*1.0f);
+        if(percentageCaptured > 1) {
+            percentageCaptured = 1;
+        }
         setup.progress.text = (int)(percentageCaptured*100) + "/" + (int)(GameSetup.levelManager.getCurrentLevel().percentage);
         if (percentageCaptured*100 > GameSetup.levelManager.getCurrentLevel().percentage) {
             setup.levelComplete();
