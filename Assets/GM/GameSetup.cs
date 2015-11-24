@@ -80,9 +80,6 @@ public class GameSetup : MonoBehaviour {
         //levelCompleteSprite.transform.localScale = new Vector2(Screen.width / 4f, Screen.width / 4f);
 
         levelCompletePanel.SetActive(false);
-
-        RectTransform rect = levelCompletePanel.GetComponent<RectTransform>();
-        //rect.anchoredPosition = new Vector3(0, -Screen.height*0.2f);
     }
 
     private void setUpGameOver() {
@@ -91,9 +88,6 @@ public class GameSetup : MonoBehaviour {
         //gameOverSprite.transform.localScale = mainCam.ScreenToWorldPoint( new Vector2(Screen.width/8f, Screen.height/8f));
 
         gameOverPanel.SetActive(false);
-
-        RectTransform rect = gameOverPanel.GetComponent<RectTransform>();
-        //rect.anchoredPosition = new Vector3(0, -Screen.height*0.2f);
     }
 
     private void generateGrid() {
@@ -193,6 +187,9 @@ public class GameSetup : MonoBehaviour {
             gameOverPanel.SetActive(true);
         else
             levelCompletePanel.SetActive(true);
+
+        LevelProgress.progress.completeLevel(levelManager.currentLevelIndex);
+        LevelProgress.progress.save();
     }
 
     private void revealBackground() {

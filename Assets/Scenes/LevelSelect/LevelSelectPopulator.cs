@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class LevelSelectPopulator : MonoBehaviour {
 
@@ -28,6 +29,13 @@ public class LevelSelectPopulator : MonoBehaviour {
         }
         for (int i = pageMin; i < pageMax; i++) {
             GameObject levelPick = (GameObject)Instantiate(levelPickObject, new Vector3(), new Quaternion());
+            Color color = levelPick.GetComponent<Image>().color;
+
+            // if level completed, fade it out
+            if (LevelProgress.progress.isLevelCompleted(i)) {
+                levelPick.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0.5f);
+            }
+
             levelPick.transform.SetParent(levelCanvas.transform);
             levels.AddLast(levelPick);
             levelPick.GetComponent<TextMesh>().text = (i + 1) + "";

@@ -6,19 +6,21 @@ public class LevelManager {
 
     public List<Level> levels { get; set; }
 
+    private LevelProgress progress;
+
     int _currentLevelIndex;
     public int currentLevelIndex {
-        set
-        {
+        set {
             if (value < levels.Count)
                 _currentLevelIndex = value;
         }
-        get { return _currentLevelIndex; } }
+        get { return _currentLevelIndex; }
+    }
 
-    public int unlockedLevelIndex { set; get; }
+    
 
-    public LevelManager()
-    {
+    public LevelManager() {
+        this.progress = LevelProgress.progress;
         levels = new List<Level>();
         levels.Add(new Level(65, 20, 7, 25, "Sounds/music1"));
         levels.Add(new Level(75, 20, 7, 25, "Sounds/music1"));
@@ -41,17 +43,21 @@ public class LevelManager {
 
         // https://soundcloud.com/ddddan/ddddan-bassss
         levels.Add(new Level(85, 5, 7, 35, "Sounds/music5"));
-        unlockedLevelIndex = levels.Count-1;
-        currentLevelIndex = unlockedLevelIndex;
+        
+
+
+        currentLevelIndex = getFirstIncompleteLevel();
     }
 
-    public Level getCurrentLevel()
-    {
+    public Level getCurrentLevel() {
         return levels[currentLevelIndex];
     }
 
-    public bool isLastLevel()
-    {
+    public bool isLastLevel() {
         return currentLevelIndex == levels.Count - 1;
+    }
+
+    private int getFirstIncompleteLevel() {
+        return progress.getFirstIncompleteLevel(levels.Count);
     }
 }

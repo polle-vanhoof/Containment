@@ -15,18 +15,12 @@ public class MainSetup : MonoBehaviour {
     //usefull screenpoints
     private Vector2 bottomLeft;
     private Vector2 topRight;
-    private Vector2 screenCenter;
-    private float screenWidth;
-    private float screenHeight;
 
 	// Use this for initialization
 	void Start () {
         // Get screen positions en calculate usefull points
         bottomLeft = cam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f));
         topRight = cam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0f));
-        screenCenter = new Vector2((topRight.x + bottomLeft.x) / 2, (topRight.y + bottomLeft.y) / 2);
-        screenWidth = topRight.x - bottomLeft.x;
-        screenHeight = topRight.y - bottomLeft.y;
 
         // Fit title to screen
         screenfitTitle();

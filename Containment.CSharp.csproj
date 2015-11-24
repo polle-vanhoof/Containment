@@ -83,6 +83,7 @@
     <Compile Include="Assets\Player\PlayerControls.cs" />
     <Compile Include="Assets\Player\TrailRendererLevel.cs" />
     <Compile Include="Assets\Scenes\LevelSelect\LevelManager.cs" />
+    <Compile Include="Assets\Scenes\LevelSelect\LevelProgress.cs" />
     <Compile Include="Assets\Scenes\LevelSelect\LevelSelectPopulator.cs" />
     <Compile Include="Assets\Scenes\LevelSelect\PageControl.cs" />
     <Compile Include="Assets\Scenes\MainMenu\MainMenuSetup.cs" />
