@@ -42,6 +42,14 @@ public class AreaCapture : MonoBehaviour {
 
         // check if enemy collides with path at exact moment you build wall
         if (controls.checkEnemyOnPath()) {
+            Debug.Log("enemy on path");
+            return;
+        } else {
+            Debug.Log("enemy not on path");
+        }
+
+        // check if asynchronous collision might have already ended the game
+        if (setup.isGameOverBool()) {
             return;
         }
 
@@ -50,9 +58,9 @@ public class AreaCapture : MonoBehaviour {
         point1 = new Vector2(e1.transform.position.x, e1.transform.position.y);
         point2 = new Vector2(e2.transform.position.x, e2.transform.position.y);
 
-        //if (GameSetup.debugMode) {
+        if (GameSetup.debugMode) {
             Debug.Log("Collision Box between (" + point1.x + "," + point1.y + ") and (" + point2.x + "," + point2.y + ")");
-        //}
+        }
         Vector2 floodFillStartPoint;
         float backOffset = setup.spriteSize + 0.05f;
         Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
@@ -69,7 +77,7 @@ public class AreaCapture : MonoBehaviour {
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(point1.x, yOffset);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
             wallOrientation.Add(newWall.GetComponent<BoxCollider2D>(), "V");
-            Pathwalls.AddLast(newWall.GetComponent<BoxCollider2D>());
+            
             if (controls.direction.Equals("up")) {
                 backOffset = -backOffset;
             }
@@ -108,7 +116,6 @@ public class AreaCapture : MonoBehaviour {
             newWall.GetComponent<BoxCollider2D>().offset = new Vector2(xOffset, point1.y);
             walls.AddLast(newWall.GetComponent<BoxCollider2D>());
             wallOrientation.Add(newWall.GetComponent<BoxCollider2D>(), "H");
-            Pathwalls.AddLast(newWall.GetComponent<BoxCollider2D>());
             if (controls.direction.Equals("right")) {
                 backOffset = -backOffset;
             }
@@ -136,6 +143,7 @@ public class AreaCapture : MonoBehaviour {
                 }
             }
         }
+        Pathwalls.AddLast(newWall.GetComponent<BoxCollider2D>());
         if (hitWall && !colliderPartOfPath(targetWall)) {
             Pathwalls.Clear();
             GridElement closestPoint = setup.findClosestGridElement(floodFillStartPoint);

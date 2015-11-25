@@ -42,9 +42,11 @@ public class EnemyAI : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D colInfo) {
         if(colInfo.collider.tag == "Player") {
+            Debug.Log("hit player");
             setup.gameOver();
         }
         if (areaCapture.colliderPartOfPath(colInfo.gameObject.GetComponent<BoxCollider2D>())){
+            Debug.Log("collision game over");
             setup.gameOver();
         }
     }

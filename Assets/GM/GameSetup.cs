@@ -37,6 +37,7 @@ public class GameSetup : MonoBehaviour {
     public float menuBarSize;
 
     public int numberOfGridElements;
+    private bool isGameOver;
 
     private static LevelManager levelManager;
 
@@ -53,6 +54,8 @@ public class GameSetup : MonoBehaviour {
     }
     
     void Start() {
+        isGameOver = false;
+
         AudioSource audio = GetComponent<AudioSource>();
         audio.clip = (AudioClip)Resources.Load(levelManager.getCurrentLevel().musicFileName, typeof(AudioClip));
         audio.Play();
@@ -178,6 +181,7 @@ public class GameSetup : MonoBehaviour {
     }
 
     public void gameOver() {
+        isGameOver = true;
         pauzeButtonScript.pauseNoMenu();
         pauzeButton.interactable = false;
         gameOverSprite.GetComponent<Renderer>().enabled = true;
@@ -376,5 +380,9 @@ public class GameSetup : MonoBehaviour {
 
     public Vector2 getGridDimensions() {
         return numSprites;
+    }
+
+    public bool isGameOverBool() {
+        return isGameOver;
     }
 }

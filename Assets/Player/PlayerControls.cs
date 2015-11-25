@@ -79,7 +79,10 @@ public class PlayerControls : MonoBehaviour {
 
         // stop generating trail
         if (!areaCapture.colliderPartOfPath(colInfo.gameObject.GetComponent<BoxCollider2D>())) {
-            trailRenderer.stopTrail();
+            // check if asynchronous collision ended game
+            if (!setup.isGameOverBool()) {
+                trailRenderer.stopTrail();
+            }
         }
         String lastWallSide = wallSide;
         // set wall side
@@ -248,7 +251,7 @@ public class PlayerControls : MonoBehaviour {
         if (!onSide && direction.Equals("left")) {
             return;
         }
-        if(!cornerFollowMode && onSide && wallSide.Equals("left")) {
+        if (!cornerFollowMode && onSide && wallSide.Equals("left")) {
             return;
         }
         if (GameSetup.debugMode)
@@ -334,6 +337,7 @@ public class PlayerControls : MonoBehaviour {
                 if (hit.collider != null) {
                     if (hit.collider.gameObject.tag == "Enemy") {
                         setup.gameOver();
+                        Debug.Log("enemy detected");
                         return true;
                     }
                 }
@@ -389,7 +393,7 @@ public class PlayerControls : MonoBehaviour {
 
                 if (wallTest.collider != null && wallTest.collider != lastWall && rayWallAcceptOrientation.Equals(colliderOrientation)) {
                     if (currentWall != wallTest.collider.gameObject.GetComponent<BoxCollider2D>() && badWall != wallTest.collider.gameObject.GetComponent<BoxCollider2D>()) {
-                        if(GameSetup.debugMode) Debug.Log("different wall detected: " + wallTest.collider.gameObject.GetComponent<BoxCollider2D>().name);
+                        if (GameSetup.debugMode) Debug.Log("different wall detected: " + wallTest.collider.gameObject.GetComponent<BoxCollider2D>().name);
 
                         // set player to exact grid position
                         // little bit hacky, move player to closest element, but slightly in the direction it will be going.
