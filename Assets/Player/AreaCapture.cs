@@ -35,50 +35,29 @@ public class AreaCapture : MonoBehaviour {
     }
 
     private void createCollisionBox(Vector2 point1, Vector2 point2, bool hitWall, BoxCollider2D targetWall) {
-        StartCoroutine(BuildDelayedCollisionBox(point1, point2, hitWall, targetWall, 0.1f));
-    }
-
-    public void setLastMovePointNull() {
-        lastMovePoint = Vector2.zero;
-        validLastMovePoint = false;
-    }
-
-    private void setLastMovePoint(Vector2 point) {
-        lastMovePoint = point;
-        validLastMovePoint = true;
-    }
-
-    public Vector2 getLastMovePoint() {
-        return lastMovePoint;
-    }
-
-    public bool isValidLastMovePoint() {
-        return validLastMovePoint;
-    }
-
-    public void createCollisionIfRequired(bool hitWall, BoxCollider2D targetWall) {
-        if (!controls.onSide) {
-            if (validLastMovePoint) {
-                createCollisionBox(lastMovePoint, controls.rb.position, hitWall, targetWall);
-            }
-            setLastMovePoint(controls.rb.position);
+        // don't create invalid walls
+        if(point1.x != point2.x && point1.y != point2.y) {
+            return;
         }
-    }
 
-    IEnumerator BuildDelayedCollisionBox(Vector2 point1, Vector2 point2, bool hitWall, BoxCollider2D targetWall, float delayTime) {
-        yield return new WaitForSeconds(delayTime);
+        // check if enemy collides with path at exact moment you build wall
+        if (controls.checkEnemyOnPath()) {
+            return;
+        }
+
         GridElement e1 = setup.findClosestGridElement(point1);
         GridElement e2 = setup.findClosestGridElement(point2);
         point1 = new Vector2(e1.transform.position.x, e1.transform.position.y);
         point2 = new Vector2(e2.transform.position.x, e2.transform.position.y);
 
-        if (GameSetup.debugMode) {
+        //if (GameSetup.debugMode) {
             Debug.Log("Collision Box between (" + point1.x + "," + point1.y + ") and (" + point2.x + "," + point2.y + ")");
-        }
+        //}
         Vector2 floodFillStartPoint;
         float backOffset = setup.spriteSize + 0.05f;
+        Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
+        newWall.gameObject.layer = 12;
         if (point1.x == point2.x) {
-            Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
             newWall.name = newWall.name + " " + (walls.Count + 1);
             newWall.GetComponent<BoxCollider2D>().size = new Vector2(setup.spriteSize, Math.Abs(point1.y - point2.y) + setup.spriteSize);
             float yOffset;
@@ -118,7 +97,6 @@ public class AreaCapture : MonoBehaviour {
                 }
             }
         } else {
-            Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
             newWall.name = newWall.name + " " + (walls.Count + 1);
             newWall.GetComponent<BoxCollider2D>().size = new Vector2(Math.Abs(point1.x - point2.x) + setup.spriteSize, setup.spriteSize);
             float xOffset;
@@ -163,6 +141,39 @@ public class AreaCapture : MonoBehaviour {
             GridElement closestPoint = setup.findClosestGridElement(floodFillStartPoint);
             floodFill(closestPoint);
         }
+        StartCoroutine(BuildDelayedCollisionBox(newWall, 0.1f));
+    }
+
+    public void setLastMovePointNull() {
+        lastMovePoint = Vector2.zero;
+        validLastMovePoint = false;
+    }
+
+    private void setLastMovePoint(Vector2 point) {
+        lastMovePoint = point;
+        validLastMovePoint = true;
+    }
+
+    public Vector2 getLastMovePoint() {
+        return lastMovePoint;
+    }
+
+    public bool isValidLastMovePoint() {
+        return validLastMovePoint;
+    }
+
+    public void createCollisionIfRequired(bool hitWall, BoxCollider2D targetWall) {
+        if (!controls.onSide) {
+            if (validLastMovePoint) {
+                createCollisionBox(lastMovePoint, controls.rb.position, hitWall, targetWall);
+            }
+            setLastMovePoint(controls.rb.position);
+        }
+    }
+
+    IEnumerator BuildDelayedCollisionBox(Transform newWall, float delayTime) {
+        yield return new WaitForSeconds(delayTime);
+        newWall.gameObject.layer = 11;
     }
 
     private void floodFill(GridElement startElement) {

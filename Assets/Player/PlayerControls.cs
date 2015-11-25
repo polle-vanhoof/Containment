@@ -319,6 +319,14 @@ public class PlayerControls : MonoBehaviour {
         }
 
         // check if enemy hits path
+        checkEnemyOnPath();
+
+        // check if you are about to go past a corner of a wall and act accordingly
+        outerCornerFollow();
+
+    }
+
+    public bool checkEnemyOnPath() {
         if (trailRenderer.GetComponent<TrailRenderer>().enabled == true) {
             if (areaCapture.isValidLastMovePoint()) {
                 RaycastHit2D hit = Physics2D.Linecast(transform.position, areaCapture.getLastMovePoint(), (1 << 10));
@@ -326,14 +334,12 @@ public class PlayerControls : MonoBehaviour {
                 if (hit.collider != null) {
                     if (hit.collider.gameObject.tag == "Enemy") {
                         setup.gameOver();
+                        return true;
                     }
                 }
             }
         }
-
-        // check if you are about to go past a corner of a wall and act accordingly
-        outerCornerFollow();
-
+        return false;
     }
 
     private void outerCornerFollow() {
