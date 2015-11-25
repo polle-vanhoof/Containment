@@ -6,8 +6,6 @@ public class LevelManager {
 
     public List<Level> levels { get; set; }
 
-    private LevelProgress progress;
-
     int _currentLevelIndex;
     public int currentLevelIndex {
         set {
@@ -20,7 +18,6 @@ public class LevelManager {
     
 
     public LevelManager() {
-        this.progress = LevelProgress.progress;
         levels = new List<Level>();
         levels.Add(new Level(65, 20, 7, 25, "Sounds/music1"));
         levels.Add(new Level(75, 20, 7, 25, "Sounds/music1"));
@@ -58,6 +55,6 @@ public class LevelManager {
     }
 
     private int getFirstIncompleteLevel() {
-        return progress.getFirstIncompleteLevel(levels.Count);
+        return LevelProgress.progress.getFirstIncompleteLevel(levels.Count);
     }
 }

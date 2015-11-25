@@ -187,6 +187,10 @@ public class PlayerControls : MonoBehaviour {
         }
         if (GameSetup.debugMode)
             Debug.Log("moving down");
+
+        // rotate player sprite
+        rb.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 270));
+
         rb.velocity = new Vector2(0, -speed);
         direction = "down";
         if (onSide && wallSide == "bottom") {
@@ -205,6 +209,10 @@ public class PlayerControls : MonoBehaviour {
         }
         if (GameSetup.debugMode)
             Debug.Log("moving up");
+
+        // rotate player sprite
+        rb.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
+
         rb.velocity = new Vector2(0, speed);
         direction = "up";
         if (onSide && wallSide == "top") {
@@ -223,6 +231,10 @@ public class PlayerControls : MonoBehaviour {
         }
         if (GameSetup.debugMode)
             Debug.Log("moving left");
+
+        // rotate player sprite
+        rb.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 180));
+
         rb.velocity = new Vector2(-speed, 0);
         direction = "left";
         if (onSide && wallSide == "left") {
@@ -241,6 +253,10 @@ public class PlayerControls : MonoBehaviour {
         }
         if (GameSetup.debugMode)
             Debug.Log("moving right");
+
+        // rotate player sprite
+        rb.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+
         rb.velocity = new Vector2(speed, 0);
         direction = "right";
         if (onSide && wallSide == "right") {

@@ -38,9 +38,13 @@ public class GameSetup : MonoBehaviour {
 
     public int numberOfGridElements;
 
-    public static LevelManager levelManager = new LevelManager();
+    public static LevelManager levelManager;
 
-    // Update is called once per frame
+
+    void Awake() {
+        levelManager = new LevelManager();
+    }
+    
     void Start() {
         AudioSource audio = GetComponent<AudioSource>();
         audio.clip = (AudioClip)Resources.Load(levelManager.getCurrentLevel().musicFileName, typeof(AudioClip));
