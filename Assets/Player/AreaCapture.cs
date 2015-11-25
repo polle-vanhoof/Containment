@@ -229,6 +229,8 @@ public class AreaCapture : MonoBehaviour {
 
         // check for maximum number of moves used
         if (nbMoves == GameSetup.levelManager.getCurrentLevel().nbOfMoves) {
+            setup.movesText.color = Color.red;
+            setup.movesText.fontStyle = FontStyle.Bold;
             setup.gameOver();
             return;
         }
