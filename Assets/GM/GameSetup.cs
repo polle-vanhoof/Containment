@@ -38,11 +38,18 @@ public class GameSetup : MonoBehaviour {
 
     public int numberOfGridElements;
 
-    public static LevelManager levelManager;
+    private static LevelManager levelManager;
+
+    public static LevelManager getLevelManager() {
+        if(GameSetup.levelManager == null) {
+            GameSetup.levelManager = new LevelManager();
+        }
+        return levelManager;
+    }
 
 
     void Awake() {
-        levelManager = new LevelManager();
+        getLevelManager();
     }
     
     void Start() {

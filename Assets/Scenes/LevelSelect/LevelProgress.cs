@@ -12,7 +12,7 @@ public class LevelProgress : MonoBehaviour {
 
     private LinkedList<int> completedLevels = new LinkedList<int>();
 
-    public int unlockedLevelIndex { set; get; }
+    private LinkedList<int> unlockedLevels = new LinkedList<int>();
 
 
     void Awake() {
@@ -32,9 +32,17 @@ public class LevelProgress : MonoBehaviour {
         return false;
     }
 
+    public bool isLevelUnlocked(int levelNumber) {
+        if (unlockedLevels.Contains(levelNumber)) {
+            return true;
+        }
+        return false;
+    }
+
     public void completeLevel(int levelNumber) {
         if (!completedLevels.Contains(levelNumber)) {
             completedLevels.AddLast(levelNumber);
+            unlockedLevels.AddLast(getFirstLockedLevel());
         }
     }
 
@@ -47,13 +55,22 @@ public class LevelProgress : MonoBehaviour {
         return numLevels - 1;
     }
 
+    public int getFirstLockedLevel() {
+        for (int i = 0; i < Int32.MaxValue; i++) {
+            if (!isLevelUnlocked(i)) {
+                return i;
+            }
+        }
+        return Int32.MaxValue;
+    }
+
     public void save() {
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/levelData.dat");
         Debug.Log("Saved level data to: " + Application.persistentDataPath + "/levelData.dat");
         LevelData data = new LevelData();
         data.completedLevels = this.completedLevels;
-        data.unlockedLevelIndex = this.unlockedLevelIndex;
+        data.unlockedLevels = this.unlockedLevels;
 
         bf.Serialize(file, data);
         file.Close();
@@ -61,28 +78,24 @@ public class LevelProgress : MonoBehaviour {
 
     private void load() {
         if(File.Exists(Application.persistentDataPath + "/levelData.dat")) {
+            Debug.Log("Loading from: " + Application.persistentDataPath + "/levelData.dat");
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + "/levelData.dat", FileMode.Open);
             LevelData data = (LevelData)bf.Deserialize(file);
             file.Close();
 
             this.completedLevels = data.completedLevels;
-            this.unlockedLevelIndex = data.unlockedLevelIndex;
-            /*completedLevels.AddLast(0); completedLevels.AddLast(1); completedLevels.AddLast(2);*/
+            this.unlockedLevels = data.unlockedLevels;
         } else {
-            completedLevels.AddLast(0); completedLevels.AddLast(1); completedLevels.AddLast(2);
-            completedLevels.AddLast(3); completedLevels.AddLast(4); completedLevels.AddLast(5);
-            /*completedLevels.AddLast(6); completedLevels.AddLast(7); completedLevels.AddLast(8);
-            completedLevels.AddLast(9); completedLevels.AddLast(10); completedLevels.AddLast(11);
-            completedLevels.AddLast(12);*/
-            unlockedLevelIndex = 11;
+            unlockedLevels.AddLast(0);
+            unlockedLevels.AddLast(1);
         }
     }
 
     [Serializable]
     class LevelData {
         public LinkedList<int> completedLevels = new LinkedList<int>();
-        public int unlockedLevelIndex { set; get; }
+        public LinkedList<int> unlockedLevels = new LinkedList<int>();
     }
 
 

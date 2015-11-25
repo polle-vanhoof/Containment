@@ -9,7 +9,7 @@ public class EnemyAI : MonoBehaviour {
     public AreaCapture areaCapture;
 
     void Start() {
-        totalEnemySpeed = GameSetup.levelManager.getCurrentLevel().enemySpeed;
+        totalEnemySpeed = GameSetup.getLevelManager().getCurrentLevel().enemySpeed;
 
         double randomNumber = UnityEngine.Random.Range(0.4F, 0.6F); //Don't start vertical or horizontal because that's too easy!
 

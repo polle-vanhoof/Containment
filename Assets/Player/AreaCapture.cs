@@ -214,21 +214,21 @@ public class AreaCapture : MonoBehaviour {
 
         // Set number of moves before checking level complete, don't check if number of moves exceeded yet
         nbMoves++;
-        setup.movesText.text = nbMoves + "/" + GameSetup.levelManager.getCurrentLevel().nbOfMoves;
+        setup.movesText.text = nbMoves + "/" + GameSetup.getLevelManager().getCurrentLevel().nbOfMoves;
 
         // check for level complete
         float percentageCaptured = (gridElementsCaptured * 1.0f) / (setup.numberOfGridElements * 1.0f);
         if (percentageCaptured > 1) {
             percentageCaptured = 1;
         }
-        setup.progress.text = (int)(percentageCaptured * 100) + "/" + (int)(GameSetup.levelManager.getCurrentLevel().percentage);
-        if (percentageCaptured * 100 > GameSetup.levelManager.getCurrentLevel().percentage) {
+        setup.progress.text = (int)(percentageCaptured * 100) + "/" + (int)(GameSetup.getLevelManager().getCurrentLevel().percentage);
+        if (percentageCaptured * 100 > GameSetup.getLevelManager().getCurrentLevel().percentage) {
             setup.levelComplete();
             return;
         }
 
         // check for maximum number of moves used
-        if (nbMoves == GameSetup.levelManager.getCurrentLevel().nbOfMoves) {
+        if (nbMoves == GameSetup.getLevelManager().getCurrentLevel().nbOfMoves) {
             setup.movesText.color = Color.red;
             setup.movesText.fontStyle = FontStyle.Bold;
             setup.gameOver();

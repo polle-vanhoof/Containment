@@ -9,8 +9,8 @@ public class PlayerControls : MonoBehaviour {
     public AreaCapture areaCapture;
     public GameSetup setup;
 
-    public float speed = 5;
-    public float sensitivity = 3;
+    private float speed = 5;
+    private float sensitivity = 1;
 
     public bool onSide = true;
     public String direction;
@@ -32,7 +32,7 @@ public class PlayerControls : MonoBehaviour {
     public Rigidbody2D rb;
 
     void Start() {
-        speed = GameSetup.levelManager.getCurrentLevel().playerSpeed;
+        speed = GameSetup.getLevelManager().getCurrentLevel().playerSpeed;
         rb = GetComponent<Rigidbody2D>();
         //Do not use moveRight here because this will mess up collisionDetection
         rb.velocity = new Vector2(speed, 0);
