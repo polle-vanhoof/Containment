@@ -35,10 +35,10 @@ public class LevelSelectPopulator : MonoBehaviour {
             // Set level color, fade if completed, black if locked
             Color color = levelPick.GetComponent<Image>().color;
             if (LevelProgress.progress.isLevelCompleted(i)) {
-                levelPick.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0.5f);
+                levelPick.GetComponent<Image>().color = new Color(color.r*0.6f, color.g/0.6f, color.b, 0.8f);
             }
             if (!LevelProgress.progress.isLevelUnlocked(i)) {
-                levelPick.GetComponent<Image>().color = new Color(0, 0, 0, 1);
+                levelPick.GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1);
             }
 
             levelPick.transform.SetParent(levelCanvas.transform);

@@ -82,6 +82,7 @@
     <Compile Include="Assets\Player\AreaCapture.cs" />
     <Compile Include="Assets\Player\PlayerControls.cs" />
     <Compile Include="Assets\Player\TrailRendererLevel.cs" />
+    <Compile Include="Assets\Scenes\LevelSelect\BGScaler.cs" />
     <Compile Include="Assets\Scenes\LevelSelect\LevelManager.cs" />
     <Compile Include="Assets\Scenes\LevelSelect\LevelProgress.cs" />
     <Compile Include="Assets\Scenes\LevelSelect\LevelSelectPopulator.cs" />

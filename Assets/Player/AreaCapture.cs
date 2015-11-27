@@ -62,7 +62,8 @@ public class AreaCapture : MonoBehaviour {
             Debug.Log("Collision Box between (" + point1.x + "," + point1.y + ") and (" + point2.x + "," + point2.y + ")");
         }
         Vector2 floodFillStartPoint;
-        float backOffset = setup.spriteSize + 0.05f;
+        //float backOffset = setup.spriteSize + 0.05f;
+        float backOffset = 0;
         Transform newWall = (Transform)Instantiate(PrefabWall, new Vector3(0, 0, 0), Quaternion.identity);
         newWall.gameObject.layer = 12;
         if (point1.x == point2.x) {

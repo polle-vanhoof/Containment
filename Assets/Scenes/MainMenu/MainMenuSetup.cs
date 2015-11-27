@@ -1,16 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System;
 
-public class MainSetup : MonoBehaviour {
+public class MainMenuSetup : MonoBehaviour {
 
-    public GameObject titleBar;
     public Camera cam;
     public Canvas canvas;
     public Canvas buttonCanvas;
 
-    public GameObject playButton;
-    public GameObject levelSelectButton;
+    public SpriteRenderer backgroundSprite;
 
     //usefull screenpoints
     private Vector2 bottomLeft;
@@ -22,42 +21,33 @@ public class MainSetup : MonoBehaviour {
         bottomLeft = cam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f));
         topRight = cam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0f));
 
-        // Fit title to screen
-        screenfitTitle();
-
-        // Fit buttons to screen
-        screenfitButtons();
+        screenfitBackground();
 	}
 
 
-    private void screenfitTitle() {
-        // Get title position
-        RectTransform title = titleBar.GetComponent<RectTransform>();
+    private void screenfitBackground() {
+        Sprite sp = backgroundSprite.sprite;
+        Vector3 pos = transform.position;
+        Vector3[] array = new Vector3[2];
+        //top left
+        array[0] = pos + sp.bounds.min;
+        // Bottom right
+        array[1] = pos + sp.bounds.max;
 
-        // Get title size
-        Vector2 size = title.rect.size;
+        float width = Math.Abs(array[1].x - array[0].x);
+        float height = Math.Abs(array[0].y - array[1].y);
 
+        float screenWidth = topRight.x - bottomLeft.x;
+        float screenHeight = topRight.y - bottomLeft.y;
 
-        LineRenderer line = titleBar.GetComponent<LineRenderer>();
-        Vector2 linePos1 = new Vector2(-size.x / 2.1f, -size.y / 3f);
-        Vector2 linePos2 = new Vector2(size.x / 2.1f, -size.y / 3f);
-        line.SetPosition(0, linePos1);
-        line.SetPosition(1, linePos2);
-    }
+        float scaleX = screenWidth / width;
+        float scaleY = screenHeight / height;
 
+        Debug.Log("sp: " + width + "   " + height);
+        Debug.Log("screen: " + screenWidth + "    " + screenHeight);
+        Debug.Log("scale: " + scaleX + "    " + scaleY);
 
-    private void screenfitButtons() {
-        // fuck this, used canvas scaling instead
-
-        /*// Set button canvas position
-        buttonCanvas.transform.position = new Vector2(screenCenter.x, screenCenter.y - screenHeight / 8);
-
-        // Set button canvas scale
-        RectTransform buttonRect = buttonCanvas.GetComponent<RectTransform>();
-        Vector2 size = buttonRect.rect.size;
-
-        Debug.Log(size.x / Screen.width + "   " + size.y / Screen.height);
-        Debug.Log(Screen.width + "    " + Screen.height);*/
+        backgroundSprite.transform.localScale = new Vector2(scaleX, scaleY);
     }
 
 }
