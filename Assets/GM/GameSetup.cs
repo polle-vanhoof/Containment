@@ -9,6 +9,9 @@ public class GameSetup : MonoBehaviour {
 
     public static bool debugMode = false;
 
+    public GoogleAnalyticsV3 googleAnalytics;
+    private float startTime;
+
     public PauzeButton pauzeButtonScript;
     public Button pauzeButton;
     public GameObject levelCompletePanel, gameOverPanel;
@@ -42,22 +45,18 @@ public class GameSetup : MonoBehaviour {
     private static LevelManager levelManager;
 
     public static LevelManager getLevelManager() {
-        if(GameSetup.levelManager == null) {
+        if (GameSetup.levelManager == null) {
             GameSetup.levelManager = new LevelManager();
         }
         return levelManager;
     }
 
-
-    void Awake() {
-        getLevelManager();
-    }
-    
     void Start() {
+        startTime = Time.time;
         isGameOver = false;
 
         AudioSource audio = GetComponent<AudioSource>();
-        audio.clip = (AudioClip)Resources.Load(levelManager.getCurrentLevel().musicFileName, typeof(AudioClip));
+        audio.clip = (AudioClip)Resources.Load(getLevelManager().getCurrentLevel().musicFileName, typeof(AudioClip));
         audio.Play();
         audio.loop = true;
 
@@ -205,6 +204,14 @@ public class GameSetup : MonoBehaviour {
 
         LevelProgress.progress.completeLevel(levelManager.currentLevelIndex);
         LevelProgress.progress.save();
+
+        // google analytics
+        googleAnalytics.logLevel = GoogleAnalyticsV3.DebugMode.VERBOSE;
+        googleAnalytics.LogEvent("Level succesfull - " + getLevelManager().currentLevelIndex, "number of moves for level " + getLevelManager().currentLevelIndex, "Moves: " + areaCapture.getNumberOfMoves(), 1);
+        float timePassed = Time.time - startTime;
+        Debug.Log(Convert.ToInt64(timePassed));
+        googleAnalytics.LogTiming("Level Timing", Convert.ToInt64(timePassed) * 1000, "Complete Level", "Level " + getLevelManager().currentLevelIndex);
+        googleAnalytics.DispatchHits();
     }
 
     private void revealBackground() {

@@ -9,7 +9,6 @@ public class PauzeButton : MonoBehaviour {
 
     void Start() {
         Time.timeScale = 1;
-        buttonText.text = "||";
         Hide(replayButton);
         Hide(levelSelectButton);
         Hide(soundButton);
@@ -26,22 +25,28 @@ public class PauzeButton : MonoBehaviour {
 
     private void play() {
         Time.timeScale = 1;
-        buttonText.text = "||";
         Hide(replayButton);
         Hide(levelSelectButton);
         Hide(soundButton);
         score.SetActive(true);
         moves.SetActive(true);
+
+        // change button image
+        Image image = GetComponent<Image>();
+        image.sprite = Resources.Load("pause", typeof(Sprite)) as Sprite;
     }
 
     private void pause() {
         Time.timeScale = 0;
-        buttonText.text = "►";
         Unhide(replayButton);
         Unhide(levelSelectButton);
         Unhide(soundButton);
         score.SetActive(false);
         moves.SetActive(false);
+
+        // change button image
+        Image image = GetComponent<Image>();
+        image.sprite = Resources.Load("play2", typeof(Sprite)) as Sprite;
     }
 
     public void pauseNoMenu() {

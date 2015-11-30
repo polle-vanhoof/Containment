@@ -40,10 +40,6 @@ public class BGScaler : MonoBehaviour {
         float scaleX = screenWidth / width;
         float scaleY = screenHeight / height;
 
-        Debug.Log("sp: " + width + "   " + height);
-        Debug.Log("screen: " + screenWidth + "    " + screenHeight);
-        Debug.Log("scale: " + scaleX + "    " + scaleY);
-
         backgroundSprite.transform.localScale = new Vector2(scaleX, scaleY);
     }
 }

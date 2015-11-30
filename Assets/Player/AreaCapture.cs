@@ -295,4 +295,8 @@ public class AreaCapture : MonoBehaviour {
         gridElementsCaptured = 0;
     }
 
+    public int getNumberOfMoves() {
+        return nbMoves;
+    }
+
 }

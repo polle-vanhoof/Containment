@@ -11,7 +11,10 @@ public class LevelSelectPopulator : MonoBehaviour {
     public GameObject levelCanvas;
     public GameObject levelPickObject;
     public NavigationScript navigation;
+    public Image prevPageSprite;
+    public Image nextPageSprite;
 
+    private int levelsPerPage = 18;
     private int page = 1;
     private LinkedList<GameObject> levels = new LinkedList<GameObject>();
 
@@ -22,23 +25,27 @@ public class LevelSelectPopulator : MonoBehaviour {
 
     private void populate() {
         clearLevels();
-        int pageMin = (page - 1) * 12;
-        int pageMax = page * 12;
+        int pageMin = (page - 1) * levelsPerPage;
+        int pageMax = page * levelsPerPage;
         if (pageMax > levelManager.levels.Count) {
             pageMax = levelManager.levels.Count;
         }
         for (int i = pageMin; i < pageMax; i++) {
             GameObject levelPick = (GameObject)Instantiate(levelPickObject, new Vector3(), new Quaternion());
-            // Set level number
-            levelPick.GetComponent<TextMesh>().text = (i + 1) + "";
-
+            // Set level number only if unlocked
+            if (LevelProgress.progress.isLevelUnlocked(i)) {
+                levelPick.GetComponent<TextMesh>().text = (i + 1) + "";
+            } else {
+                levelPick.GetComponent<TextMesh>().text = "";
+            }
             // Set level color, fade if completed, black if locked
             Color color = levelPick.GetComponent<Image>().color;
             if (LevelProgress.progress.isLevelCompleted(i)) {
                 levelPick.GetComponent<Image>().color = new Color(color.r*0.6f, color.g/0.6f, color.b, 0.8f);
             }
             if (!LevelProgress.progress.isLevelUnlocked(i)) {
-                levelPick.GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1);
+                //levelPick.GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1);
+                levelPick.GetComponent<Image>().sprite = Resources.Load("level_locked", typeof(Sprite)) as Sprite;
             }
 
             levelPick.transform.SetParent(levelCanvas.transform);
@@ -58,6 +65,20 @@ public class LevelSelectPopulator : MonoBehaviour {
                 et.triggers.Add(entry);
             }
         }
+
+        // hide prev/next page buttons is required
+        hidePageButtons();
+    }
+
+    private void hidePageButtons() {
+        prevPageSprite.color = new Color(prevPageSprite.color.r, prevPageSprite.color.g, prevPageSprite.color.b, 1f);
+        nextPageSprite.color = new Color(prevPageSprite.color.r, prevPageSprite.color.g, prevPageSprite.color.b, 1f);
+        if (page == 1) {
+            prevPageSprite.color = new Color(prevPageSprite.color.r, prevPageSprite.color.g, prevPageSprite.color.b, 0.0f);
+        }
+        if (!(page * levelsPerPage < levelManager.levels.Count)) {
+            nextPageSprite.color = new Color(prevPageSprite.color.r, prevPageSprite.color.g, prevPageSprite.color.b, 0.0f);
+        }
     }
 
     private void clearLevels() {
@@ -70,7 +91,7 @@ public class LevelSelectPopulator : MonoBehaviour {
     }
 
     public void nextPage() {
-        if (page * 12 < levelManager.levels.Count) {
+        if (page * levelsPerPage < levelManager.levels.Count) {
             page++;
             populate();
         }

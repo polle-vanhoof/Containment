@@ -7,9 +7,12 @@ public class EnemyAI : MonoBehaviour {
     public int totalEnemySpeed = 20;
     public GameSetup setup;
     public AreaCapture areaCapture;
+    private bool playerHoming = false;
+    private float homingModifier = 4;
 
     void Start() {
         totalEnemySpeed = GameSetup.getLevelManager().getCurrentLevel().enemySpeed;
+        playerHoming = GameSetup.getLevelManager().getCurrentLevel().homing;
 
         double randomNumber = UnityEngine.Random.Range(0.4F, 0.6F); //Don't start vertical or horizontal because that's too easy!
 
@@ -37,7 +40,14 @@ public class EnemyAI : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-
+        if (playerHoming) {
+            GetComponent<Rigidbody2D>().AddForce((setup.player.transform.position - transform.position) * 5 * Time.smoothDeltaTime);
+            if (GetComponent<Rigidbody2D>().velocity.magnitude * homingModifier  > totalEnemySpeed) {
+                float scale = totalEnemySpeed / (GetComponent<Rigidbody2D>().velocity.magnitude * homingModifier);
+                GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x * scale, GetComponent<Rigidbody2D>().velocity.y * scale);
+                Debug.Log(GetComponent<Rigidbody2D>().velocity.magnitude);
+            }
+        }
     }
 
     void OnCollisionEnter2D(Collision2D colInfo) {
