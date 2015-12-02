@@ -19,7 +19,9 @@ public class LevelManager {
 
     public LevelManager() {
         levels = new List<Level>();
-        levels.Add(new Level(65, 20, 7, 25, "Sounds/music1"));
+        Level lvl1 = new Level(65, 20, 7, 25, "Sounds/music1");
+        lvl1.isTutorial = true;
+        levels.Add(lvl1);
         levels.Add(new Level(75, 20, 7, 25, "Sounds/music1"));
         levels.Add(new Level(85, 20, 7, 25, "Sounds/music1"));
 

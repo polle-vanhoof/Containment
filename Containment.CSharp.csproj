@@ -80,26 +80,30 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Backgrounds\BGManager.cs" />
-    <Compile Include="Assets\Enemy\EnemyAI.cs" />
-    <Compile Include="Assets\GM\GameSetup.cs" />
-    <Compile Include="Assets\GM\GridElement.cs" />
-    <Compile Include="Assets\GM\Level.cs" />
-    <Compile Include="Assets\GM\TouchTest.cs" />
     <Compile Include="Assets\HideScript.cs" />
-    <Compile Include="Assets\Menu\NavigationScript.cs" />
-    <Compile Include="Assets\Menu\PauzeButton.cs" />
-    <Compile Include="Assets\Menu\RestartButton.cs" />
-    <Compile Include="Assets\Menu\SoundButton.cs" />
-    <Compile Include="Assets\Player\AreaCapture.cs" />
-    <Compile Include="Assets\Player\PlayerControls.cs" />
-    <Compile Include="Assets\Player\TrailRendererLevel.cs" />
+    <Compile Include="Assets\Scenes\Game\Backgrounds\BGManager.cs" />
+    <Compile Include="Assets\Scenes\Game\Enemy\EnemyAI.cs" />
+    <Compile Include="Assets\Scenes\Game\GM\GameSetup.cs" />
+    <Compile Include="Assets\Scenes\Game\GM\GridElement.cs" />
+    <Compile Include="Assets\Scenes\Game\GM\Level.cs" />
+    <Compile Include="Assets\Scenes\Game\GM\TouchTest.cs" />
+    <Compile Include="Assets\Scenes\Game\PauzeButton.cs" />
+    <Compile Include="Assets\Scenes\Game\Player\AreaCapture.cs" />
+    <Compile Include="Assets\Scenes\Game\Player\PlayerControls.cs" />
+    <Compile Include="Assets\Scenes\Game\Player\TrailRendererLevel.cs" />
+    <Compile Include="Assets\Scenes\Game\RestartButton.cs" />
+    <Compile Include="Assets\Scenes\Game\SoundButton.cs" />
     <Compile Include="Assets\Scenes\LevelSelect\BGScaler.cs" />
+    <Compile Include="Assets\Scenes\LevelSelect\BackButton.cs" />
     <Compile Include="Assets\Scenes\LevelSelect\LevelManager.cs" />
     <Compile Include="Assets\Scenes\LevelSelect\LevelProgress.cs" />
     <Compile Include="Assets\Scenes\LevelSelect\LevelSelectPopulator.cs" />
+    <Compile Include="Assets\Scenes\LevelSelect\MusicSetup.cs" />
     <Compile Include="Assets\Scenes\LevelSelect\PageControl.cs" />
     <Compile Include="Assets\Scenes\MainMenu\MainMenuSetup.cs" />
+    <Compile Include="Assets\Scenes\MainMenu\MuteButtonMain.cs" />
+    <Compile Include="Assets\Scenes\MusicScript.cs" />
+    <Compile Include="Assets\Scenes\NavigationScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Plugins\Android\AndroidManifest.xml" />
