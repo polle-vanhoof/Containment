@@ -5,6 +5,8 @@ using System;
 
 public class MainMenuSetup : MonoBehaviour {
 
+    public GoogleAnalyticsV3 googleAnalytics;
+
     public Camera cam;
     public Canvas canvas;
     public Canvas buttonCanvas;
@@ -17,12 +19,16 @@ public class MainMenuSetup : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+        PlayerPrefs.SetInt("playerId", UnityEngine.Random.Range(1, Int32.MaxValue));
         MusicScript.music.play("Sounds/MenuMusic");
         // Get screen positions en calculate usefull points
         bottomLeft = cam.ScreenToWorldPoint(new Vector3(0f, 0f, 0f));
         topRight = cam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0f));
 
         screenfitBackground();
+        int playerId = PlayerPrefs.GetInt("playerId");
+        googleAnalytics.LogScreen("Player: " + playerId + ", Main Menu");
 	}
 
 

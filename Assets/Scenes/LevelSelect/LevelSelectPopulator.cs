@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class LevelSelectPopulator : MonoBehaviour {
 
+    public GoogleAnalyticsV3 googleAnalytics;
+
     public LevelManager levelManager;
     public GameObject levelCanvas;
     public GameObject levelPickObject;
@@ -21,6 +23,8 @@ public class LevelSelectPopulator : MonoBehaviour {
     void Start() {
         levelManager = new LevelManager();
         populate();
+        int playerId = PlayerPrefs.GetInt("playerId");
+        googleAnalytics.LogScreen("Player: " + playerId + ", level select screen");
     }
 
     private void populate() {

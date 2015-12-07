@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class PlayerControls : MonoBehaviour {
 
+    public GoogleAnalyticsV3 googleAnalytics;
+
     public TrailRendererLevel trailRenderer;
     public AreaCapture areaCapture;
     public GameSetup setup;
@@ -20,6 +22,8 @@ public class PlayerControls : MonoBehaviour {
     private String lastTouch = "";
 
     private bool cornerFollowMode = false;
+
+    private int movesInPath = 0;
 
     // NOT RELIABLE, DO NOT USE FOR ANYTHING OTHER THAN CORNER MOVEMENT EDGE CASES
     private Collider2D currentWall;
@@ -95,6 +99,9 @@ public class PlayerControls : MonoBehaviour {
                 Debug.Log("building wall");
             }
             areaCapture.createCollisionIfRequired(true, colInfo.gameObject.GetComponent<BoxCollider2D>());
+            int playerId = PlayerPrefs.GetInt("playerId");
+            googleAnalytics.LogEvent("Moves per capture - level" + GameSetup.getLevelManager().currentLevelIndex, "Player: " + playerId + ", Moves per capture - level" + GameSetup.getLevelManager().currentLevelIndex, "CaptureMoves: " + (movesInPath-1), 1);
+            //googleAnalytics.DispatchHits();
         } else {
             if (lastWallSide == "bottom") {
                 moveDown();
@@ -116,11 +123,13 @@ public class PlayerControls : MonoBehaviour {
                 colInfo.gameObject.name == "topWall" ||
                 colInfo.gameObject.name == "bottomWall") {
             onSide = true;
+            movesInPath = 0;
         } else {
             if (!areaCapture.colliderPartOfPath(colInfo.gameObject.GetComponent<BoxCollider2D>())) {
                 foreach (BoxCollider2D collider in areaCapture.walls) {
                     if (collider == colInfo.collider) {
                         onSide = true;
+                        movesInPath = 0;
                     }
                 }
             }
@@ -200,6 +209,9 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
+        if (!onSide) {
+            movesInPath++;
+        }
         areaCapture.createCollisionIfRequired(false, null);
     }
 
@@ -221,6 +233,9 @@ public class PlayerControls : MonoBehaviour {
         if (onSide && wallSide == "top") {
             onSide = false;
             trailRenderer.startTrail();
+        }
+        if (!onSide) {
+            movesInPath++;
         }
         areaCapture.createCollisionIfRequired(false, null);
     }
@@ -244,6 +259,9 @@ public class PlayerControls : MonoBehaviour {
             onSide = false;
             trailRenderer.startTrail();
         }
+        if (!onSide) {
+            movesInPath++;
+        }
         areaCapture.createCollisionIfRequired(false, null);
     }
 
@@ -265,6 +283,9 @@ public class PlayerControls : MonoBehaviour {
         if (onSide && wallSide == "right") {
             onSide = false;
             trailRenderer.startTrail();
+        }
+        if (!onSide) {
+            movesInPath++;
         }
         areaCapture.createCollisionIfRequired(false, null);
     }

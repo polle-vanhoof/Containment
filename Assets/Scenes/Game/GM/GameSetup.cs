@@ -88,6 +88,9 @@ public class GameSetup : MonoBehaviour {
 
         progress.text = "0/" + (int)(levelManager.getCurrentLevel().percentage);
         movesText.text = "0/" + levelManager.getCurrentLevel().nbOfMoves;
+
+        int playerId = PlayerPrefs.GetInt("playerId");
+        googleAnalytics.LogScreen("Player: " + playerId + ", level screen: " + levelManager.currentLevelIndex);
     }
 
     private void setUpLevelComplete() {
@@ -192,6 +195,9 @@ public class GameSetup : MonoBehaviour {
         }
 
         gameOverPanel.SetActive(true);
+        int playerId = PlayerPrefs.GetInt("playerId");
+        googleAnalytics.LogEvent("Level failed - " + getLevelManager().currentLevelIndex, "Player: " + playerId + ", level failed - " + getLevelManager().currentLevelIndex, "BecauseOutOfMoves: " + outOfMoves, 1);
+        googleAnalytics.DispatchHits();
     }
 
 
@@ -212,10 +218,10 @@ public class GameSetup : MonoBehaviour {
         LevelProgress.progress.save();
 
         // google analytics
-        googleAnalytics.logLevel = GoogleAnalyticsV3.DebugMode.VERBOSE;
-        googleAnalytics.LogEvent("Level succesfull - " + getLevelManager().currentLevelIndex, "number of moves for level " + getLevelManager().currentLevelIndex, "Moves: " + areaCapture.getNumberOfMoves(), 1);
+        int playerId = PlayerPrefs.GetInt("playerId");
+        googleAnalytics.LogEvent("Level succesfull - " + getLevelManager().currentLevelIndex, "Player: " + playerId + ", number of moves for level " + getLevelManager().currentLevelIndex, "Moves: " + areaCapture.getNumberOfMoves(), 1);
         float timePassed = Time.time - startTime;
-        googleAnalytics.LogTiming("Level Timing", Convert.ToInt64(timePassed) * 1000, "Complete Level", "Level " + getLevelManager().currentLevelIndex);
+        googleAnalytics.LogTiming("Level Timing", Convert.ToInt64(timePassed) * 1000, "Player: " + playerId + ", Complete Level", "Level " + getLevelManager().currentLevelIndex);
         googleAnalytics.DispatchHits();
     }
 
